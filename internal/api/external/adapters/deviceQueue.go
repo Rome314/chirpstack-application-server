@@ -78,13 +78,15 @@ func QueueListRespFromPb(resp *pb.ListDeviceQueueItemsResponse, err error) (resp
 
 	toReturn := struct {
 		DefaultResp
-		TotalCount       uint32   `json:"total_count,omitempty"`
-		DeviceQueueItems []lsItem `json:"device_queue_items,omitempty"`
+		TotalCount       uint32   `json:"total_count"`
+		DeviceQueueItems []lsItem `json:"device_queue_items"`
 	}{}
 	toReturn.SetCmd("get_device_downlink_queue_resp")
 
 	if err != nil {
-		toReturn.SetErr(err)
+		tr := DefaultResp{Cmd: "get_device_downlink_queue_resp"}
+		tr.SetErr(err)
+		respBts,_ = json.Marshal(tr)
 	} else {
 		toReturn.Status = true
 		toReturn.TotalCount = resp.TotalCount
@@ -101,9 +103,8 @@ func QueueListRespFromPb(resp *pb.ListDeviceQueueItemsResponse, err error) (resp
 			ls = append(ls, tmp)
 		}
 		toReturn.DeviceQueueItems = ls
-
+		respBts, _ = json.Marshal(toReturn)
 	}
-	respBts, _ = json.Marshal(toReturn)
 	return respBts
 
 }
