@@ -93,8 +93,14 @@ func (r *Realization) doAddDevice(cmd string, ctx context.Context, input []byte)
 
 	if req.Activate == nil {
 		_, err = r.Api.Device.CreateKeys(ctx, req.Keys)
+		if err != nil {
+			r.Api.Device.Delete(ctx, &pb.DeleteDeviceRequest{DevEui: req.Device.Device.DevEui})
+		}
 	} else {
 		_, err = r.Api.Device.Activate(ctx, req.Activate)
+		if err != nil {
+			r.Api.Device.Delete(ctx, &pb.DeleteDeviceRequest{DevEui: req.Device.Device.DevEui})
+		}
 	}
 
 	return adapters.CreateDeviceRespFromError(err)
@@ -130,7 +136,6 @@ func (r *Realization) doGetDeviceInfo(cmd string, ctx context.Context, input []b
 
 		aResp, aErr = r.Api.Device.GetActivation(ctx, req)
 		if aErr != nil {
-			r.Api.Device.Delete(ctx, &pb.DeleteDeviceRequest{DevEui: devEUI})
 			break
 		}
 		activations = aResp.DeviceActivation
@@ -141,7 +146,6 @@ func (r *Realization) doGetDeviceInfo(cmd string, ctx context.Context, input []b
 
 		kResp, aErr = r.Api.Device.GetKeys(ctx, req)
 		if aErr != nil {
-			r.Api.Device.Delete(ctx, &pb.DeleteDeviceRequest{DevEui: devEUI})
 			break
 		}
 		keys = kResp.DeviceKeys

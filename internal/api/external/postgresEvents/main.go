@@ -55,7 +55,7 @@ func (r *Repo) GetPackets(devEUI string,limit, offset int) (resp []adapters.Upli
 	id := &lorawan.EUI64{}
 	_ = id.UnmarshalText([]byte(devEUI))
 
-	query := fmt.Sprintf(`SELECT received_at,device_name,application_id,frequency,dr,adr,f_cnt,f_port,data,rx_info from device_up WHERE dev_eui = $1 LIMIT %d OFFSEET %d`,limit,offset)
+	query := fmt.Sprintf(`SELECT received_at,device_name,application_id,frequency,dr,adr,f_cnt,f_port,data,rx_info from device_up WHERE dev_eui = $1 LIMIT %d OFFSET %d`,limit,offset)
 
 	rows, err := r.db.Query(query, id)
 	if err != nil {

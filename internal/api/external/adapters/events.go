@@ -8,6 +8,7 @@ import (
 )
 
 type Uplink struct {
+	Cmd           string  `json:"cmd,omitempty"`
 	ApplicationID string  `json:"applicationID"`
 	DeviceName    string  `json:"deviceName"`
 	DevEUI        string  `json:"devEUI"`
@@ -49,6 +50,7 @@ func UplinkEventFromPb(event pb.UplinkEvent) (resp Uplink) {
 	}
 
 	toReturn := Uplink{
+		Cmd:           "rx_resp",
 		ApplicationID: strconv.FormatUint(event.ApplicationId, 10),
 		DeviceName:    event.DeviceName,
 		DevEUI:        devEUI.String(),

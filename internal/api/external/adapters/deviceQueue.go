@@ -31,20 +31,26 @@ func SendDataReqFromBytes(input []byte) (*pb.EnqueueDeviceQueueItemRequest, erro
 }
 
 func SendDataRespFromPb(resp *pb.EnqueueDeviceQueueItemResponse, err error) (respBts []byte) {
-	toReturn := struct {
+	toReturnSuccess := struct {
 		DefaultResp
-		FCnt uint32 `json:"fCnt,omitempty"`
+		FCnt uint32 `json:"fCnt"`
 	}{}
-	toReturn.SetCmd("send_data_resp")
+
+	toReturnSuccess.SetCmd("send_data_resp")
 
 	if err != nil {
-		toReturn.SetErr(err)
+		t := DefaultResp{
+			Cmd: "send_data_resp",
+		}
+		t.SetErr(err)
+		respBts, _ = json.Marshal(t)
 	} else {
-		toReturn.Status = true
-		toReturn.FCnt = resp.FCnt
+		toReturnSuccess.Status = true
+		toReturnSuccess.FCnt = resp.FCnt
+		respBts, _ = json.Marshal(toReturnSuccess)
+
 	}
 
-	respBts, _ = json.Marshal(toReturn)
 	return respBts
 }
 
@@ -72,7 +78,7 @@ func QueueListRespFromPb(resp *pb.ListDeviceQueueItemsResponse, err error) (resp
 
 	toReturn := struct {
 		DefaultResp
-		TotalCount       uint32   `json:"total_count,omitemptt"`
+		TotalCount       uint32   `json:"total_count,omitempty"`
 		DeviceQueueItems []lsItem `json:"device_queue_items,omitempty"`
 	}{}
 	toReturn.SetCmd("get_device_downlink_queue_resp")
