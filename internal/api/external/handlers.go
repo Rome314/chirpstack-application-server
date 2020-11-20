@@ -25,6 +25,7 @@ var wsupgrader = websocket.Upgrader{
 }
 
 func (h *Realization) Handler(w http.ResponseWriter, r *http.Request) {
+	var err error
 
 	con, err := wsupgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -81,8 +82,11 @@ func (h *Realization) Handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if jwt == "" {
-		resp := adapters.LoginRespFromPb(nil, err)
-		con.WriteJSON(resp)
+		toSend := adapters.DefaultResp{
+			Cmd: "auth_resp",
+		}
+		toSend.SetErr(err)
+		con.WriteJSON(toSend)
 		con.Close()
 		return
 	}
