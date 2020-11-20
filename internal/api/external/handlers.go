@@ -51,28 +51,38 @@ func (h *Realization) Handler(w http.ResponseWriter, r *http.Request) {
 	}()
 	err = con.ReadJSON(&authReq)
 	if err != nil {
-		con.WriteJSON(http.StatusBadRequest)
+		toSend := adapters.DefaultResp{
+			Cmd:    "INVALID",
+			Status: false,
+			ErrMsg: adapters.InvalidJsonErr.Error(),
+		}
+		con.WriteJSON(toSend)
 		return
 	}
 	if time.Since(timeStart) < authTimeout {
 		ready <- true
 	} else {
-		w.WriteHeader(http.StatusRequestTimeout)
+		toSend := adapters.DefaultResp{
+			Cmd:    "auth_req",
+			Status: false,
+			ErrMsg: "auth timeout",
+		}
+		con.WriteJSON(toSend)
 		con.Close()
 		return
 	}
 
-	var respBts []byte
 	var jwt string
 	if authReq.Jwt != "" {
 		jwt = authReq.Jwt
 	} else {
-		respBts, jwt = h.doLogin(authReq.Login, authReq.Password)
+		jwt, err = h.doLogin(authReq.Login, authReq.Password)
 
 	}
 
 	if jwt == "" {
-		con.WriteJSON(http.StatusUnauthorized)
+		resp := adapters.LoginRespFromPb(nil, err)
+		con.WriteJSON(resp)
 		con.Close()
 		return
 	}
@@ -83,29 +93,42 @@ func (h *Realization) Handler(w http.ResponseWriter, r *http.Request) {
 	ctx := metadata.NewIncomingContext(context.Background(), md)
 	usr, err := h.v.GetUser(ctx)
 	if err != nil {
-		con.WriteJSON(http.StatusUnauthorized)
+		toSend := adapters.DefaultResp{Cmd: "auth_resp"}
+		toSend.SetErr(err)
+		con.WriteJSON(toSend)
 		con.Close()
 		return
 	}
 
 	id := fmt.Sprintf("%d_%d", usr.ID, time.Now().Unix())
 	h.Connect(id, ctx, con)
-	con.WriteJSON(respBts)
+
+	resp := struct {
+		Cmd    string `json:"cmd"`
+		Status bool   `json:"status"`
+		Jwt    string `json:"jwt"`
+	}{
+		Cmd:    "auth_resp",
+		Status: true,
+		Jwt:    jwt,
+	}
+
+	con.WriteJSON(resp)
 
 	return
 }
 
-func (h *Realization) doLogin(login, password string) (respBts []byte, jwt string) {
+func (h *Realization) doLogin(login, password string) (jwt string, err error) {
 	ctx := context.Background()
 	req := &pb.LoginRequest{Email: login, Password: password}
 
 	resp, err := h.Api.Internal.Login(ctx, req)
 	if err != nil {
-		return nil, ""
+		return "", err
 	}
 
-	respBts = adapters.LoginRespFromPb(resp, err)
-	return respBts, resp.Jwt
+	// respBts = adapters.LoginRespFromPb(resp, err)
+	return resp.Jwt, nil
 
 }
 

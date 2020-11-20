@@ -1,0 +1,37 @@
+{
+  "gateways": {
+    "discoveryEnabled": false,
+    "gatewayProfileID": "89605e15-ef5c-4075-ad0b-e27e742f5e5c",
+    "networkServerID": 1,
+    "organizationID": 1,
+    "location": {
+      "accuracy": 0,
+      "altitude": 0,
+      "latitude": 0,
+      "longitude": 0,
+      "source": "UNKNOWN"
+    }
+  },
+  "devices": {
+    "ABP": {
+      "1" : "a7bb1e3c-9d46-4a94-b326-4cadd64a8be2",
+      "2" : "a7bb1e3c-9d46-4a94-b326-4cadd64a8be2",
+      "3" : "a7bb1e3c-9d46-4a94-b326-4cadd64a8be2",
+      "4" : "a7bb1e3c-9d46-4a94-b326-4cadd64a8be2",
+      "5" : "a7bb1e3c-9d46-4a94-b326-4cadd64a8be2",
+      "6" : "a7bb1e3c-9d46-4a94-b326-4cadd64a8be2",
+      "7" : "a7bb1e3c-9d46-4a94-b326-4cadd64a8be2",
+      "8" : "a7bb1e3c-9d46-4a94-b326-4cadd64a8be2"
+    },
+    "OTAA": {
+      "1" : "cfeada52-7843-41b2-852d-9b709385f3e8",
+      "2" : "cfeada52-7843-41b2-852d-9b709385f3e8",
+      "3" : "cfeada52-7843-41b2-852d-9b709385f3e8",
+      "4" : "cfeada52-7843-41b2-852d-9b709385f3e8",
+      "5" : "cfeada52-7843-41b2-852d-9b709385f3e8",
+      "6" : "cfeada52-7843-41b2-852d-9b709385f3e8",
+      "7" : "cfeada52-7843-41b2-852d-9b709385f3e8",
+      "8" : "cfeada52-7843-41b2-852d-9b709385f3e8"
+    }
+  }
+}

@@ -2,15 +2,17 @@ package adapters
 
 import "encoding/json"
 
-func GetEventsReqFromBts(input []byte) (devEUI string,err error) {
+func GetEventsReqFromBts(input []byte) (devEUI string, limit, offset int, err error) {
 	incoming := struct {
 		DevEui string `json:"devEUI"`
+		Limit  int    `json:"limit"`
+		Offset int    `json:"offset"`
 	}{}
 	err = json.Unmarshal(input, &incoming)
-	if err != nil{
-		return "", InvalidJsonErr
+	if err != nil {
+		return "", 0, 0, InvalidJsonErr
 	}
-	return incoming.DevEui,nil
+	return incoming.DevEui, incoming.Limit, incoming.Offset, nil
 }
 
 func GetEventsRespFromList(resp []Uplink, err error) (respBts []byte) {

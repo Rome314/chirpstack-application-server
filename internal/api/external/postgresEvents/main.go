@@ -3,6 +3,7 @@ package postgresEvents
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -48,13 +49,13 @@ type rxJson struct {
 	GatewayID string  `json:"gatewayID"`
 }
 
-func (r *Repo) GetPackets(devEUI string) (resp []adapters.Uplink, err error) {
+func (r *Repo) GetPackets(devEUI string,limit, offset int) (resp []adapters.Uplink, err error) {
 	resp = []adapters.Uplink{}
 
 	id := &lorawan.EUI64{}
 	_ = id.UnmarshalText([]byte(devEUI))
 
-	query := `SELECT received_at,device_name,application_id,frequency,dr,adr,f_cnt,f_port,data,rx_info from device_up WHERE dev_eui = $1`
+	query := fmt.Sprintf(`SELECT received_at,device_name,application_id,frequency,dr,adr,f_cnt,f_port,data,rx_info from device_up WHERE dev_eui = $1 LIMIT %d OFFSEET %d`,limit,offset)
 
 	rows, err := r.db.Query(query, id)
 	if err != nil {
@@ -112,6 +113,11 @@ func (r *Repo) GetPackets(devEUI string) (resp []adapters.Uplink, err error) {
 		resp = append(resp, tmp)
 
 	}
+
+	if len(resp) == 0{
+		return nil, fmt.Errorf("not found")
+	}
+
 	return resp, nil
 
 }

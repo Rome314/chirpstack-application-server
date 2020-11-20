@@ -46,7 +46,7 @@ proto:
 
 ui/build:
 	@echo "Building ui"
-	@cd ui && npm run build
+	@cd ui && npm i && npm run build
 	@mv ui/build/* static
 
 internal/statics internal/migrations: static/swagger/api.swagger.json

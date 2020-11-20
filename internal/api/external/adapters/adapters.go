@@ -51,10 +51,12 @@ func UnknownCommandResp(cmd string) (respBts []byte) {
 }
 
 func GetDefaultRespFromError(cmd string, err error) (respBts []byte) {
+	errMsg := err.Error()
+	errMsg = grpcErrRegexp.ReplaceAllString(errMsg, "")
 	toReturn := DefaultResp{
 		Cmd:    cmd,
 		Status: false,
-		ErrMsg: "Unknown command",
+		ErrMsg: errMsg,
 	}
 	respBts, _ = json.Marshal(toReturn)
 	return respBts
@@ -65,7 +67,7 @@ var grpcErrRegexp = regexp.MustCompile(`(.)*desc = `)
 func (d *DefaultResp) SetErr(err error) {
 	d.Status = false
 	errMsg := err.Error()
-	grpcErrRegexp.ReplaceAllString(errMsg, "")
+	errMsg = grpcErrRegexp.ReplaceAllString(errMsg, "")
 	d.ErrMsg = errMsg
 	return
 }

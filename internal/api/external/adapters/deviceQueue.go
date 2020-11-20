@@ -9,7 +9,7 @@ import (
 func SendDataReqFromBytes(input []byte) (*pb.EnqueueDeviceQueueItemRequest, error) {
 	incoming := struct {
 		Confirmed bool   `json:"confirmed"`
-		Data      string `json:"data"`
+		Data      []byte `json:"data"`
 		DevEUI    string `json:"devEUI"`
 		FPort     uint32 `json:"fPort"`
 	}{}
@@ -23,7 +23,7 @@ func SendDataReqFromBytes(input []byte) (*pb.EnqueueDeviceQueueItemRequest, erro
 		DevEui:    incoming.DevEUI,
 		Confirmed: incoming.Confirmed,
 		FPort:     incoming.FPort,
-		Data:      []byte(incoming.Data),
+		Data:      incoming.Data,
 	}
 	req := &pb.EnqueueDeviceQueueItemRequest{DeviceQueueItem: qi}
 	return req, nil
@@ -67,7 +67,7 @@ func QueueListRespFromPb(resp *pb.ListDeviceQueueItemsResponse, err error) (resp
 		Confirmed bool   `json:"confirmed"`
 		FCnt      uint32 `json:"fCnt"`
 		FPort     uint32 `json:"fPort"`
-		Data      string `json:"data"`
+		Data      []byte `json:"data"`
 	}
 
 	toReturn := struct {
@@ -90,12 +90,13 @@ func QueueListRespFromPb(resp *pb.ListDeviceQueueItemsResponse, err error) (resp
 				Confirmed: item.Confirmed,
 				FCnt:      item.FCnt,
 				FPort:     item.FPort,
-				Data:      string(item.Data),
+				Data:      item.Data,
 			}
 			ls = append(ls, tmp)
 		}
-	}
+		toReturn.DeviceQueueItems = ls
 
+	}
 	respBts, _ = json.Marshal(toReturn)
 	return respBts
 

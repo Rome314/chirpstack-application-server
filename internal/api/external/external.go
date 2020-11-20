@@ -27,6 +27,7 @@ import (
 	"github.com/brocaar/chirpstack-application-server/internal/api/external/auth"
 	"github.com/brocaar/chirpstack-application-server/internal/api/external/oidc"
 	"github.com/brocaar/chirpstack-application-server/internal/api/external/postgresEvents"
+	"github.com/brocaar/chirpstack-application-server/internal/api/helpers"
 	"github.com/brocaar/chirpstack-application-server/internal/config"
 	"github.com/brocaar/chirpstack-application-server/internal/static"
 	"github.com/brocaar/chirpstack-application-server/internal/storage"
@@ -42,6 +43,7 @@ var (
 	logoutURL               string
 
 	bind            string
+	bindWs            string
 	tlsCert         string
 	tlsKey          string
 	jwtSecret       string
@@ -65,6 +67,7 @@ func Setup(conf config.Config) error {
 	logoutURL = conf.ApplicationServer.UserAuthentication.OpenIDConnect.LogoutURL
 
 	bind = conf.ApplicationServer.ExternalAPI.Bind
+	bindWs = conf.ApplicationServer.ExternalAPI.BindWs
 	tlsCert = conf.ApplicationServer.ExternalAPI.TLSCert
 	tlsKey = conf.ApplicationServer.ExternalAPI.TLSKey
 	jwtSecret = conf.ApplicationServer.ExternalAPI.JWTSecret
@@ -107,13 +110,34 @@ func setupAPI(conf config.Config) error {
 		hub.Handler(w, r)
 	})
 
-	go http.ListenAndServe(bind, nil)
+	go http.ListenAndServe(bindWs, nil)
 
 	return setupAPIOld(conf)
 
 }
 
 func setupAPIOld(conf config.Config) error {
+	validator := auth.NewJWTValidator(storage.DB(), "HS256", jwtSecret)
+	rpID, err := uuid.FromString(conf.ApplicationServer.ID)
+	if err != nil {
+		return errors.Wrap(err, "application-server id to uuid error")
+	}
+
+	grpcOpts := helpers.GetgRPCServerOptions()
+	grpcServer := grpc.NewServer(grpcOpts...)
+	pb.RegisterApplicationServiceServer(grpcServer, NewApplicationAPI(validator))
+	pb.RegisterDeviceQueueServiceServer(grpcServer, NewDeviceQueueAPI(validator))
+	pb.RegisterDeviceServiceServer(grpcServer, NewDeviceAPI(validator))
+	pb.RegisterUserServiceServer(grpcServer, NewUserAPI(validator))
+	pb.RegisterInternalServiceServer(grpcServer, NewInternalAPI(validator))
+	pb.RegisterGatewayServiceServer(grpcServer, NewGatewayAPI(validator))
+	pb.RegisterGatewayProfileServiceServer(grpcServer, NewGatewayProfileAPI(validator))
+	pb.RegisterOrganizationServiceServer(grpcServer, NewOrganizationAPI(validator))
+	pb.RegisterNetworkServerServiceServer(grpcServer, NewNetworkServerAPI(validator))
+	pb.RegisterServiceProfileServiceServer(grpcServer, NewServiceProfileServiceAPI(validator))
+	pb.RegisterDeviceProfileServiceServer(grpcServer, NewDeviceProfileServiceAPI(validator))
+	pb.RegisterMulticastGroupServiceServer(grpcServer, NewMulticastGroupAPI(validator, rpID))
+	pb.RegisterFUOTADeploymentServiceServer(grpcServer, NewFUOTADeploymentAPI(validator))
 
 	// setup the client http interface variable
 	// we need to start the gRPC service first, as it is used by the
@@ -122,24 +146,26 @@ func setupAPIOld(conf config.Config) error {
 
 	// switch between gRPC and "plain" http handler
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-		if clientHTTPHandler == nil {
-			w.WriteHeader(http.StatusNotImplemented)
-			return
-		}
-
-		if corsAllowOrigin != "" {
-			w.Header().Set("Access-Control-Allow-Origin", corsAllowOrigin)
-			w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-			w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Grpc-Metadata-Authorization")
-
-			if r.Method == "OPTIONS" {
+		if r.ProtoMajor == 2 && strings.Contains(r.Header.Get("Content-Type"), "application/grpc") {
+			grpcServer.ServeHTTP(w, r)
+		} else {
+			if clientHTTPHandler == nil {
+				w.WriteHeader(http.StatusNotImplemented)
 				return
 			}
+
+			if corsAllowOrigin != "" {
+				w.Header().Set("Access-Control-Allow-Origin", corsAllowOrigin)
+				w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+				w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Grpc-Metadata-Authorization")
+
+				if r.Method == "OPTIONS" {
+					return
+				}
+			}
+
+			clientHTTPHandler.ServeHTTP(w, r)
 		}
-
-		clientHTTPHandler.ServeHTTP(w, r)
-
 	})
 
 	// start the API server
@@ -166,13 +192,14 @@ func setupAPIOld(conf config.Config) error {
 	time.Sleep(time.Millisecond * 100)
 
 	// setup the HTTP handler
-	clientHTTPHandler, err := setupHTTPAPI(conf)
+	clientHTTPHandler, err = setupHTTPAPI(conf)
 	if err != nil {
 		return err
 	}
 
 	return nil
 }
+
 func setupHTTPAPI(conf config.Config) (http.Handler, error) {
 	r := mux.NewRouter()
 

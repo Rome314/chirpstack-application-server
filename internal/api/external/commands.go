@@ -130,6 +130,7 @@ func (r *Realization) doGetDeviceInfo(cmd string, ctx context.Context, input []b
 
 		aResp, aErr = r.Api.Device.GetActivation(ctx, req)
 		if aErr != nil {
+			r.Api.Device.Delete(ctx, &pb.DeleteDeviceRequest{DevEui: devEUI})
 			break
 		}
 		activations = aResp.DeviceActivation
@@ -140,6 +141,7 @@ func (r *Realization) doGetDeviceInfo(cmd string, ctx context.Context, input []b
 
 		kResp, aErr = r.Api.Device.GetKeys(ctx, req)
 		if aErr != nil {
+			r.Api.Device.Delete(ctx, &pb.DeleteDeviceRequest{DevEui: devEUI})
 			break
 		}
 		keys = kResp.DeviceKeys
@@ -204,11 +206,11 @@ func (r *Realization) doGetData(cmd string, ctx context.Context, input []byte) (
 	if r.pgEvents == nil {
 		return adapters.GetDefaultRespFromError(cmd, fmt.Errorf("database is disabled"))
 	}
-	devEUI, err := adapters.GetEventsReqFromBts(input)
+	devEUI, limit, offset, err := adapters.GetEventsReqFromBts(input)
 	if err != nil {
 		return adapters.GetDefaultRespFromError(cmd, err)
 	}
-	resp, err := r.pgEvents.GetPackets(devEUI)
+	resp, err := r.pgEvents.GetPackets(devEUI, limit, offset)
 
 	return adapters.GetEventsRespFromList(resp, err)
 }

@@ -7,11 +7,19 @@ import (
 )
 
 func LoginReqFromBytes(input []byte) (req *pb.LoginRequest, err error) {
-	req = &pb.LoginRequest{}
-	err = json.Unmarshal(input, req)
+	incoming := struct {
+		Login    string `json:"login"`
+		Password string `json:"password"`
+	}{}
+	err = json.Unmarshal(input, &incoming)
 	if err != nil {
 		return nil, InvalidJsonErr
 	}
+	req = &pb.LoginRequest{
+		Email:    incoming.Login,
+		Password: incoming.Password,
+	}
+
 	return req, nil
 }
 
@@ -23,7 +31,6 @@ func LoginRespFromPb(resp *pb.LoginResponse, err error) (respBts []byte) {
 	toReturn.SetCmd("auth_resp")
 	if err != nil {
 		toReturn.SetErr(err)
-
 	} else {
 		toReturn.Status = true
 		toReturn.Jwt = resp.Jwt

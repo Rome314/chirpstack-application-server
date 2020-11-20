@@ -77,6 +77,7 @@ type Config struct {
 
 		ExternalAPI struct {
 			Bind            string
+			BindWs          string `mapstructure:"bind_ws"`
 			TLSCert         string `mapstructure:"tls_cert"`
 			TLSKey          string `mapstructure:"tls_key"`
 			JWTSecret       string `mapstructure:"jwt_secret"`

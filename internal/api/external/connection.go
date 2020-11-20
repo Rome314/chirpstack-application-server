@@ -3,11 +3,13 @@ package external
 import (
 	"context"
 	"encoding/json"
-	"net/http"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
+
+	"github.com/brocaar/chirpstack-application-server/internal/api/external/adapters"
 )
 
 type Job struct {
@@ -15,7 +17,6 @@ type Job struct {
 	Cmd    string
 	Body   json.RawMessage
 }
-
 
 type Connection struct {
 	Hub                *Realization
@@ -26,8 +27,6 @@ type Connection struct {
 	WaitingForResponse bool
 	ctx                context.Context
 }
-
-
 
 func (con *Connection) waitResponses() {
 	for {
@@ -70,7 +69,17 @@ func (con *Connection) listener() {
 		if err != nil {
 			return
 		}
-		_ = json.Unmarshal(bts, &c)
+		err = json.Unmarshal(bts, &c)
+		if err != nil {
+
+			toSend := adapters.DefaultResp{
+				Cmd:    "INVALID",
+				Status: false,
+				ErrMsg: adapters.InvalidJsonErr.Error(),
+			}
+			con.Send(toSend)
+			continue
+		}
 
 		if c.Cmd != "" {
 			con.process(c.Cmd, bts)
@@ -82,7 +91,12 @@ func (con *Connection) listener() {
 func (con *Connection) process(cmd string, msg []byte) {
 	if con.WaitingForResponse {
 		con.Mux.Lock()
-		con.Con.WriteJSON(http.StatusTooEarly)
+		toSend := adapters.DefaultResp{
+			Cmd:    strings.Replace(cmd,"req","resp",1),
+			Status: false,
+			ErrMsg: "Too Early",
+		}
+		con.Con.WriteJSON(toSend)
 		con.Mux.Unlock()
 		return
 	}
