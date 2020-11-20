@@ -8,6 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	pb "github.com/brocaar/chirpstack-api/go/v3/as/integration"
+	chan_integration "github.com/brocaar/chirpstack-application-server/internal/integration/chan"
 	"github.com/brocaar/chirpstack-application-server/internal/integration/models"
 	"github.com/brocaar/chirpstack-application-server/internal/logging"
 )
@@ -28,6 +29,8 @@ func New(global, app []models.IntegrationHandler) *Integration {
 
 // HandleUplinkEvent sends an UplinkEvent.
 func (i *Integration) HandleUplinkEvent(ctx context.Context, vars map[string]string, pl pb.UplinkEvent) error {
+	chan_integration.MainThread <- pl
+
 	for _, ii := range i.integrations() {
 
 		go func(ii models.IntegrationHandler) {

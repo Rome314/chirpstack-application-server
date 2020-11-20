@@ -52,9 +52,9 @@ type User struct {
 
 // Validate validates the user data.
 func (u User) Validate() error {
-	if u.Email != "admin" && !emailValidator.MatchString(u.Email) {
-		return ErrInvalidEmail
-	}
+	// if u.Email != "admin" && !emailValidator.MatchString(u.Email) {
+	// 	return ErrInvalidEmail
+	// }
 
 	return nil
 }

@@ -232,3 +232,30 @@ func (a *UserAPI) UpdatePassword(ctx context.Context, req *pb.UpdateUserPassword
 
 	return &empty.Empty{}, nil
 }
+
+func (a *UserAPI) UpdateMailAndPassword(ctx context.Context, email, password string) (*empty.Empty, error) {
+	if err := a.validator.Validate(ctx,
+		auth.ValidateUserAccess(1, auth.Update)); err != nil {
+		return nil, grpc.Errorf(codes.Unauthenticated, "authentication failed: %s", err)
+	}
+	if email == "" || password == "" {
+		return nil, grpc.Errorf(codes.InvalidArgument, "some fields are missing, both of email and password  must be sent")
+	}
+
+	user, err := storage.GetUser(ctx, storage.DB(), 1)
+	if err != nil {
+		return nil, helpers.ErrToRPCError(err)
+	}
+
+	if err := user.SetPasswordHash(password); err != nil {
+		return nil, helpers.ErrToRPCError(err)
+	}
+	user.Email = email
+
+	if err := storage.UpdateUser(ctx, storage.DB(), &user); err != nil {
+		return nil, helpers.ErrToRPCError(err)
+	}
+
+	return &empty.Empty{}, nil
+
+}

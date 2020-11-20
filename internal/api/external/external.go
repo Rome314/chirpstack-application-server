@@ -23,9 +23,10 @@ import (
 	"google.golang.org/grpc/credentials"
 
 	pb "github.com/brocaar/chirpstack-api/go/v3/as/external/api"
+
 	"github.com/brocaar/chirpstack-application-server/internal/api/external/auth"
 	"github.com/brocaar/chirpstack-application-server/internal/api/external/oidc"
-	"github.com/brocaar/chirpstack-application-server/internal/api/helpers"
+	"github.com/brocaar/chirpstack-application-server/internal/api/external/postgresEvents"
 	"github.com/brocaar/chirpstack-application-server/internal/config"
 	"github.com/brocaar/chirpstack-application-server/internal/static"
 	"github.com/brocaar/chirpstack-application-server/internal/storage"
@@ -76,28 +77,43 @@ func Setup(conf config.Config) error {
 	return setupAPI(conf)
 }
 
+func enabledPg(enabled []string) bool {
+	for _, i := range enabled {
+		if i == "postgresql" {
+			return true
+		}
+	}
+	return false
+
+}
 func setupAPI(conf config.Config) error {
 	validator := auth.NewJWTValidator(storage.DB(), "HS256", jwtSecret)
-	rpID, err := uuid.FromString(conf.ApplicationServer.ID)
-	if err != nil {
-		return errors.Wrap(err, "application-server id to uuid error")
+
+	var pg *postgresEvents.Repo
+	if enabledPg(conf.ApplicationServer.Integration.Enabled) {
+		pg, _ = postgresEvents.NewEventsHandler(conf.ApplicationServer.Integration.PostgreSQL)
 	}
 
-	grpcOpts := helpers.GetgRPCServerOptions()
-	grpcServer := grpc.NewServer(grpcOpts...)
-	pb.RegisterApplicationServiceServer(grpcServer, NewApplicationAPI(validator))
-	pb.RegisterDeviceQueueServiceServer(grpcServer, NewDeviceQueueAPI(validator))
-	pb.RegisterDeviceServiceServer(grpcServer, NewDeviceAPI(validator))
-	pb.RegisterUserServiceServer(grpcServer, NewUserAPI(validator))
-	pb.RegisterInternalServiceServer(grpcServer, NewInternalAPI(validator))
-	pb.RegisterGatewayServiceServer(grpcServer, NewGatewayAPI(validator))
-	pb.RegisterGatewayProfileServiceServer(grpcServer, NewGatewayProfileAPI(validator))
-	pb.RegisterOrganizationServiceServer(grpcServer, NewOrganizationAPI(validator))
-	pb.RegisterNetworkServerServiceServer(grpcServer, NewNetworkServerAPI(validator))
-	pb.RegisterServiceProfileServiceServer(grpcServer, NewServiceProfileServiceAPI(validator))
-	pb.RegisterDeviceProfileServiceServer(grpcServer, NewDeviceProfileServiceAPI(validator))
-	pb.RegisterMulticastGroupServiceServer(grpcServer, NewMulticastGroupAPI(validator, rpID))
-	pb.RegisterFUOTADeploymentServiceServer(grpcServer, NewFUOTADeploymentAPI(validator))
+	hub := NewHub(validator, pg)
+
+	RegisterInternalApi(hub.(*Realization), NewInternalAPI(validator))
+	RegisterUserApi(hub.(*Realization), NewUserAPI(validator))
+	RegisterGatewayApi(hub.(*Realization), NewGatewayAPI(validator))
+	RegisterDeviceApi(hub.(*Realization), NewDeviceAPI(validator))
+	RegisterDeviceQueueApi(hub.(*Realization), NewDeviceQueueAPI(validator))
+	RegisterCommand(hub.(*Realization))
+	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+
+		hub.Handler(w, r)
+	})
+
+	go http.ListenAndServe(bind, nil)
+
+	return setupAPIOld(conf)
+
+}
+
+func setupAPIOld(conf config.Config) error {
 
 	// setup the client http interface variable
 	// we need to start the gRPC service first, as it is used by the
@@ -106,26 +122,24 @@ func setupAPI(conf config.Config) error {
 
 	// switch between gRPC and "plain" http handler
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.ProtoMajor == 2 && strings.Contains(r.Header.Get("Content-Type"), "application/grpc") {
-			grpcServer.ServeHTTP(w, r)
-		} else {
-			if clientHTTPHandler == nil {
-				w.WriteHeader(http.StatusNotImplemented)
+
+		if clientHTTPHandler == nil {
+			w.WriteHeader(http.StatusNotImplemented)
+			return
+		}
+
+		if corsAllowOrigin != "" {
+			w.Header().Set("Access-Control-Allow-Origin", corsAllowOrigin)
+			w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+			w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Grpc-Metadata-Authorization")
+
+			if r.Method == "OPTIONS" {
 				return
 			}
-
-			if corsAllowOrigin != "" {
-				w.Header().Set("Access-Control-Allow-Origin", corsAllowOrigin)
-				w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-				w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Grpc-Metadata-Authorization")
-
-				if r.Method == "OPTIONS" {
-					return
-				}
-			}
-
-			clientHTTPHandler.ServeHTTP(w, r)
 		}
+
+		clientHTTPHandler.ServeHTTP(w, r)
+
 	})
 
 	// start the API server
@@ -152,14 +166,13 @@ func setupAPI(conf config.Config) error {
 	time.Sleep(time.Millisecond * 100)
 
 	// setup the HTTP handler
-	clientHTTPHandler, err = setupHTTPAPI(conf)
+	clientHTTPHandler, err := setupHTTPAPI(conf)
 	if err != nil {
 		return err
 	}
 
 	return nil
 }
-
 func setupHTTPAPI(conf config.Config) (http.Handler, error) {
 	r := mux.NewRouter()
 
