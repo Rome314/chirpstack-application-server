@@ -19,7 +19,7 @@ import (
 var (
 	jwtsecret []byte
 	// HashIterations denfines the number of times a password is hashed.
-	HashIterations      = 100000
+	HashIterations      = 1
 	applicationServerID uuid.UUID
 )
 
