@@ -41,6 +41,17 @@ func (r *Realization) doGetGateways(cmd string, ctx context.Context, input []byt
 	resp, err := r.Api.Gateway.List(ctx, req)
 	return adapters.GatewayListRespFromPb(resp, err)
 }
+func (r *Realization) doGetGateway(cmd string, ctx context.Context, input []byte) (output []byte) {
+	if r.Api.Gateway == nil {
+		return adapters.GetDefaultRespFromError(cmd, adapters.NotImplementedErr)
+	}
+	req, err := adapters.GetGatewayReqFromBytes(input)
+	if err != nil {
+		return adapters.GetDefaultRespFromError(cmd, err)
+	}
+	resp, err := r.Api.Gateway.Get(ctx, req)
+	return adapters.GetGatewayRespFromPb(resp, err)
+}
 
 func (r *Realization) doAddGateways(cmd string, ctx context.Context, input []byte) (output []byte) {
 	if r.Api.Gateway == nil {

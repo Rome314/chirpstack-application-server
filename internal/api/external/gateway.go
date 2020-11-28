@@ -590,11 +590,16 @@ func (a *GatewayAPI) GetStats(ctx context.Context, req *pb.GetGatewayStatsReques
 	}
 
 	_, ok := ns.AggregationInterval_value[strings.ToUpper(req.Interval)]
-	if !ok {
+	if !ok  && req.Interval != "all"{
 		return nil, grpc.Errorf(codes.InvalidArgument, "bad interval: %s", req.Interval)
 	}
 
-	metrics, err := storage.GetMetrics(ctx, storage.AggregationInterval(strings.ToUpper(req.Interval)), "gw:"+gatewayID.String(), start, end)
+	var metrics []storage.MetricsRecord
+	if req.Interval == "all"{
+		metrics,err= storage.GetMetricsForAllTime("gw:"+gatewayID.String())
+	}else {
+		metrics, err = storage.GetMetrics(ctx, storage.AggregationInterval(strings.ToUpper(req.Interval)), "gw:"+gatewayID.String(), start, end)
+	}
 	if err != nil {
 		return nil, helpers.ErrToRPCError(err)
 	}

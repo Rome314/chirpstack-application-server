@@ -8,6 +8,7 @@ type config struct {
 		GatewayProfileID string `json:"gatewayProfileID"`
 		NetworkServerID  int64  `json:"networkServerID"`
 		OrganizationID   int64  `json:"organizationID"`
+		Timeout          int    `json:"timeout"`
 		Location         struct {
 			Accuracy  uint32  `json:"accuracy"`
 			Altitude  float64 `json:"altitude"`
@@ -27,12 +28,12 @@ type config struct {
 var Cfg config
 
 func (c *config) GetActivation(devProfileId string) (activation string, err error) {
-	if _,ok :=c.Devices.ReversedOTAA[devProfileId];ok{
-		return "OTAA",nil
+	if _, ok := c.Devices.ReversedOTAA[devProfileId]; ok {
+		return "OTAA", nil
 	}
-	if _,ok :=c.Devices.ReversedABP[devProfileId];ok{
-		return "ABP",nil
+	if _, ok := c.Devices.ReversedABP[devProfileId]; ok {
+		return "ABP", nil
 	}
 	return "", fmt.Errorf("Internal Error: Profile not found")
-	
+
 }
