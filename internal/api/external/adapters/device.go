@@ -9,10 +9,19 @@ import (
 )
 
 func GetDevisesListReq(input []byte) (*pb.ListDeviceRequest, error) {
-	req := pb.ListDeviceRequest{}
-	err := json.Unmarshal(input, &req)
+	incoming := struct {
+		Limit         int64 `json:"limit"`
+		Offset        int64 `json:"offset"`
+		ApplicationID int64 `json:"applicationID"`
+	}{}
+	err := json.Unmarshal(input, &incoming)
 	if err != nil {
 		return nil, InvalidJsonErr
+	}
+	req := pb.ListDeviceRequest{
+		Limit:         incoming.Limit,
+		Offset:        incoming.Offset,
+		ApplicationId: incoming.ApplicationID,
 	}
 	return &req, nil
 }
@@ -53,6 +62,11 @@ func GetDevisesListResp(resp *pb.ListDeviceResponse, err error) (respBts []byte)
 		toReturn.TotalCount = resp.TotalCount
 
 	}
+
+	if toReturn.TotalCount == 0 {
+		toReturn.SetErr(fmt.Errorf("not found"))
+	}
+
 	respBts, _ = json.Marshal(toReturn)
 	return
 
@@ -74,7 +88,7 @@ func CreateDeviceReqFromBytes(input []byte) (resp *CreateDeviceReq, err error) {
 		Keys          struct {
 			DevAddr string `json:"devAddr"`
 			AppSKey string `json:"appSKey"`
-			AppKey string `json:"appKey"`
+			AppKey  string `json:"appKey"`
 			NwkSKey string `json:"nwkSKey"`
 		} `json:"keys"`
 	}{}
