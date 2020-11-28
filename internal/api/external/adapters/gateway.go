@@ -162,14 +162,14 @@ func GetGatewayReqFromBytes(input []byte) (*pb.GetGatewayRequest, error) {
 func GetGatewayRespFromPb(resp *pb.GetGatewayResponse, err error) (respBts []byte) {
 	toReturn := struct {
 		DefaultResp
-		Id          string `json:"id"`
-		Name        string `json:"name"`
-		Description string `json:"description"`
-		CreatedAt   string `json:"createdAt"`
-		UpdatedAt   string `json:"updatedAt"`
-		FirstSeenAt string `json:"firstSeenAt"`
-		LastSeenAt  string `json:"lastSeenAt"`
-		Connected   bool   `json:"connected"`
+		Id          string `json:"id,omitempty"`
+		Name        string `json:"name,omitempty"`
+		Description string `json:"description,omitempty"`
+		CreatedAt   string `json:"createdAt,omitempty"`
+		UpdatedAt   string `json:"updatedAt,omitempty"`
+		FirstSeenAt string `json:"firstSeenAt,omitempty"`
+		LastSeenAt  string `json:"lastSeenAt,omitempty"`
+		Connected   bool   `json:"connected,omitempty"`
 	}{}
 	toReturn.SetCmd("get_gateway_resp")
 
