@@ -10,18 +10,19 @@ import (
 
 func GetDevisesListReq(input []byte) (*pb.ListDeviceRequest, error) {
 	incoming := struct {
-		Limit         int64 `json:"limit"`
-		Offset        int64 `json:"offset"`
-		ApplicationID int64 `json:"applicationID"`
+		Limit         int64  `json:"limit"`
+		Offset        int64  `json:"offset"`
+		ApplicationID string `json:"applicationID"`
 	}{}
 	err := json.Unmarshal(input, &incoming)
+	appId, _ := strconv.ParseInt(incoming.ApplicationID, 10, 64)
 	if err != nil {
 		return nil, InvalidJsonErr
 	}
 	req := pb.ListDeviceRequest{
 		Limit:         incoming.Limit,
 		Offset:        incoming.Offset,
-		ApplicationId: incoming.ApplicationID,
+		ApplicationId: appId,
 	}
 	return &req, nil
 }
@@ -30,7 +31,7 @@ func GetDevisesListResp(resp *pb.ListDeviceResponse, err error) (respBts []byte)
 	type lsItem struct {
 		DevEUI        string `json:"devEUI"`
 		Name          string `json:"name"`
-		ApplicationID int64  `json:"applicationID"`
+		ApplicationID string `json:"applicationID"`
 		Description   string `json:"description"`
 		LasSeenAt     string `json:"lasSeenAt"`
 	}
@@ -50,7 +51,7 @@ func GetDevisesListResp(resp *pb.ListDeviceResponse, err error) (respBts []byte)
 			tmp := lsItem{
 				DevEUI:        device.DevEui,
 				Name:          device.Name,
-				ApplicationID: device.ApplicationId,
+				ApplicationID: strconv.Itoa(int(device.ApplicationId)),
 				Description:   device.Description,
 				LasSeenAt:     fromTimeStamp(device.LastSeenAt),
 			}
