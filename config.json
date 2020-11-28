@@ -4,6 +4,7 @@
     "gatewayProfileID": "89605e15-ef5c-4075-ad0b-e27e742f5e5c",
     "networkServerID": 1,
     "organizationID": 1,
+    "timeout": 123,
     "location": {
       "accuracy": 0,
       "altitude": 0,

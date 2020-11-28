@@ -32,6 +32,7 @@ func RegisterCommand(r *Realization) {
 		"auth_req":                      r.doAuth,
 		"user_upd_req":                  r.doUserUpdate,
 		"get_gateways_req":              r.doGetGateways,
+		"get_gateway_req":               r.doGetGateway,
 		"add_gateway_req":               r.doAddGateways,
 		"delete_gateways_req":           r.doDeleteGateways,
 		"get_devices_req":               r.doGetDevices,

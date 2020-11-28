@@ -6,6 +6,7 @@ import (
 
 	pb "github.com/brocaar/chirpstack-api/go/v3/as/external/api"
 	"github.com/brocaar/chirpstack-api/go/v3/common"
+	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/timestamp"
 )
 
@@ -36,6 +37,7 @@ func GatewayListRespFromPb(resp *pb.ListGatewayResponse, err error) (respBts []b
 		UpdatedAt   string `json:"updatedAt"`
 		FirstSeenAt string `json:"firstSeenAt"`
 		LastSeenAt  string `json:"lastSeenAt"`
+		Connected   bool   `json:"connected"`
 	}
 
 	toReturn := struct {
@@ -54,6 +56,14 @@ func GatewayListRespFromPb(resp *pb.ListGatewayResponse, err error) (respBts []b
 
 		ls := []lsItem{}
 		for _, gw := range resp.Result {
+			var connected bool
+			lastSeen, err := ptypes.Timestamp(gw.LastSeenAt)
+			if err == nil {
+				timeoutSeconds := time.Second * time.Duration(Cfg.Gateways.Timeout)
+				connected = time.Now().Before(lastSeen.Add(timeoutSeconds))
+
+			}
+
 			tmp := lsItem{
 				Id:          gw.Id,
 				Name:        gw.Name,
@@ -62,6 +72,7 @@ func GatewayListRespFromPb(resp *pb.ListGatewayResponse, err error) (respBts []b
 				UpdatedAt:   fromTimeStamp(gw.UpdatedAt),
 				FirstSeenAt: fromTimeStamp(gw.FirstSeenAt),
 				LastSeenAt:  fromTimeStamp(gw.LastSeenAt),
+				Connected:   connected,
 			}
 			ls = append(ls, tmp)
 		}
@@ -137,4 +148,53 @@ func GatewayDeleteRespFromError(err error) (respBts []byte) {
 
 	respBts, _ = json.Marshal(toReturn)
 	return respBts
+}
+
+func GetGatewayReqFromBytes(input []byte) (*pb.GetGatewayRequest, error) {
+	resp := pb.GetGatewayRequest{}
+	err := json.Unmarshal(input, &resp)
+	if err != nil {
+		return nil, InvalidJsonErr
+	}
+	return &resp, nil
+}
+
+func GetGatewayRespFromPb(resp *pb.GetGatewayResponse, err error) (respBts []byte) {
+	toReturn := struct {
+		DefaultResp
+		Id          string `json:"id"`
+		Name        string `json:"name"`
+		Description string `json:"description"`
+		CreatedAt   string `json:"createdAt"`
+		UpdatedAt   string `json:"updatedAt"`
+		FirstSeenAt string `json:"firstSeenAt"`
+		LastSeenAt  string `json:"lastSeenAt"`
+		Connected   bool   `json:"connected"`
+	}{}
+	toReturn.SetCmd("get_gateway_resp")
+
+	if err != nil {
+		toReturn.SetErr(err)
+	} else {
+		toReturn.Status = true
+		toReturn.Id = resp.Gateway.Id
+		toReturn.Name = resp.Gateway.Name
+		toReturn.Description = resp.Gateway.Description
+		toReturn.CreatedAt = fromTimeStamp(resp.CreatedAt)
+		toReturn.UpdatedAt = fromTimeStamp(resp.UpdatedAt)
+		toReturn.FirstSeenAt = fromTimeStamp(resp.FirstSeenAt)
+		toReturn.LastSeenAt = fromTimeStamp(resp.LastSeenAt)
+
+		var connected bool
+		lastSeen, err := ptypes.Timestamp(resp.LastSeenAt)
+		if err == nil {
+			timeoutSeconds := time.Second * time.Duration(Cfg.Gateways.Timeout)
+			connected = time.Now().Before(lastSeen.Add(timeoutSeconds))
+
+		}
+		toReturn.Connected = connected
+	}
+	respBts, _ = json.Marshal(toReturn)
+	return respBts
+
 }

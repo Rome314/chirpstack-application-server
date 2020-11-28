@@ -6,10 +6,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/brocaar/chirpstack-application-server/internal/logging"
 	"github.com/go-redis/redis/v7"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/brocaar/chirpstack-application-server/internal/logging"
 )
 
 // AggregationInterval defines the aggregation type.
@@ -24,8 +25,8 @@ const (
 )
 
 const (
-	metricsKeyTempl = "lora:as:metrics:{%s}:%s:%d" // metrics key (identifier | aggregation | timestamp)
-
+	metricsKeyTempl    = "lora:as:metrics:{%s}:%s:%d" // metrics key (identifier | aggregation | timestamp)
+	allMetricsKeyTempl = "lora:as:metrics:{%s}:MONTH:*"
 )
 
 var (
@@ -133,6 +134,51 @@ func SaveMetricsForInterval(ctx context.Context, agg AggregationInterval, name s
 	}).Debug("metrics saved")
 
 	return nil
+}
+func GetMetricsForAllTime(name string) ([]MetricsRecord, error) {
+
+	key := fmt.Sprintf(allMetricsKeyTempl, name)
+
+	keys, err := RedisClient().Keys(key).Result()
+	if len(keys) == 0 {
+		err = fmt.Errorf("NOT_FOUND: %w", err)
+		return nil, err
+	}
+	pipe := RedisClient().Pipeline()
+	var vals []*redis.StringStringMapCmd
+	for _, k := range keys {
+		vals = append(vals, pipe.HGetAll(k))
+	}
+	if _, err := pipe.Exec(); err != nil {
+		return nil, errors.Wrap(err, "hget error")
+	}
+
+	var out []MetricsRecord
+	metrics := MetricsRecord{
+		Time: time.Now(),
+		Metrics: map[string]float64{
+			"rx_count":    0.0,
+			"rx_ok_count": 0.0,
+			"tx_count":    0.0,
+			"tx_ok_count": 0.0,
+		},
+	}
+
+	for _, current := range vals {
+		val := current.Val()
+		for k, v := range val {
+			f, err := strconv.ParseFloat(v, 64)
+			if err != nil {
+				return nil, errors.Wrap(err, "parse float error")
+			}
+			metrics.Metrics[k] += f
+		}
+	}
+
+	out = append(out, metrics)
+
+	return out, nil
+
 }
 
 // GetMetrics returns the metrics for the requested aggregation interval.
