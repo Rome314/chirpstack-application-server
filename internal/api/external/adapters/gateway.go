@@ -162,19 +162,22 @@ func GetGatewayReqFromBytes(input []byte) (*pb.GetGatewayRequest, error) {
 func GetGatewayRespFromPb(resp *pb.GetGatewayResponse, err error) (respBts []byte) {
 	toReturn := struct {
 		DefaultResp
-		Id          string `json:"id,omitempty"`
-		Name        string `json:"name,omitempty"`
-		Description string `json:"description,omitempty"`
-		CreatedAt   string `json:"createdAt,omitempty"`
-		UpdatedAt   string `json:"updatedAt,omitempty"`
-		FirstSeenAt string `json:"firstSeenAt,omitempty"`
-		LastSeenAt  string `json:"lastSeenAt,omitempty"`
-		Connected   bool   `json:"connected,omitempty"`
+		Id          string `json:"id"`
+		Name        string `json:"name"`
+		Description string `json:"description"`
+		CreatedAt   string `json:"createdAt"`
+		UpdatedAt   string `json:"updatedAt"`
+		FirstSeenAt string `json:"firstSeenAt"`
+		LastSeenAt  string `json:"lastSeenAt"`
+		Connected   bool   `json:"connected"`
 	}{}
 	toReturn.SetCmd("get_gateway_resp")
 
 	if err != nil {
+		toReturn := DefaultResp{Cmd:"get_gateway_resp" }
 		toReturn.SetErr(err)
+		respBts,_ = json.Marshal(toReturn)
+
 	} else {
 		toReturn.Status = true
 		toReturn.Id = resp.Gateway.Id
@@ -193,8 +196,9 @@ func GetGatewayRespFromPb(resp *pb.GetGatewayResponse, err error) (respBts []byt
 
 		}
 		toReturn.Connected = connected
+		respBts, _ = json.Marshal(toReturn)
+
 	}
-	respBts, _ = json.Marshal(toReturn)
 	return respBts
 
 }
