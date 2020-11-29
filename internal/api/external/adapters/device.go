@@ -33,13 +33,13 @@ func GetDevisesListResp(resp *pb.ListDeviceResponse, err error) (respBts []byte)
 		Name          string `json:"name"`
 		ApplicationID string `json:"applicationID"`
 		Description   string `json:"description"`
-		LasSeenAt     string `json:"lasSeenAt"`
+		LasSeenAt     string `json:"lastSeenAt"`
 	}
 
 	toReturn := struct {
 		DefaultResp
-		TotalCount  int64    `json:"total_count,omitempty"`
-		DevicesList []lsItem `json:"devices_list,omitempty"`
+		TotalCount  int64    `json:"total_count"`
+		DevicesList []lsItem `json:"devices_list"`
 	}{}
 	toReturn.SetCmd("get_devices_resp")
 
@@ -226,6 +226,7 @@ func GetDeviceRespFromPb(err error, aType string, device *pb.GetDeviceResponse, 
 	if err != nil {
 		toReturn.SetErr(err)
 	} else {
+		toReturn.Status = true
 		devId := strconv.Itoa(int(device.Device.ApplicationId))
 
 		toReturn.DevEUI = device.Device.DevEui
