@@ -14,16 +14,16 @@ func GatewayStatsReqFromBytes(input []byte) (*pb.GetGatewayStatsRequest, error) 
 	incoming := struct {
 		GatewayId      string `json:"gateway_id"`
 		Interval       string `json:"interval"`
-		StartTimestamp string `json:"startTimestamp"`
-		EndTimestamp   string `json:"endTimestamp"`
+		StartTimestamp int64  `json:"startTimestamp"`
+		EndTimestamp   int64  `json:"endTimestamp"`
 	}{}
 	err := json.Unmarshal(input, &incoming)
 	if err != nil {
 		return nil, InvalidJsonErr
 	}
 
-	start, _ := time.Parse(incomingTimeFormat, incoming.StartTimestamp)
-	end, _ := time.Parse(incomingTimeFormat, incoming.EndTimestamp)
+	start := time.Unix(incoming.StartTimestamp, 0)
+	end := time.Unix(incoming.EndTimestamp, 0)
 
 	startProto, _ := ptypes.TimestampProto(start)
 	endProto, _ := ptypes.TimestampProto(end)
@@ -39,28 +39,29 @@ func GatewayStatsReqFromBytes(input []byte) (*pb.GetGatewayStatsRequest, error) 
 
 func GatewayStatsRespFromPb(resp *pb.GetGatewayStatsResponse, err error) (respBts []byte) {
 	type lsItem struct {
-		Timestamp           string `json:"timestamp"`
-		RxPacketsReceived   int32  `json:"rxPacketsReceived"`
-		RxPacketsReceivedOK int32  `json:"rxPacketsReceivedOK"`
-		TxPacketsReceived   int32  `json:"txPacketsReceived"`
-		TxPacketsEmitted    int32  `json:"txPacketsEmitted"`
+		Timestamp           int64 `json:"timestamp"`
+		RxPacketsReceived   int32 `json:"rxPacketsReceived"`
+		RxPacketsReceivedOK int32 `json:"rxPacketsReceivedOK"`
+		TxPacketsReceived   int32 `json:"txPacketsReceived"`
+		TxPacketsEmitted    int32 `json:"txPacketsEmitted"`
 	}
 
 	toReturn := struct {
 		DefaultResp
-		Result []lsItem `json:"result,omitempty"`
+		Result []lsItem `json:"result"`
 	}{}
 	toReturn.SetCmd("get_gw_stat_resp")
 
 	if err != nil {
-		toReturn.SetErr(err)
+		tr := DefaultResp{}
+		tr.SetErr(err)
+		respBts, _ = json.Marshal(tr)
 	} else {
 		toReturn.Status = true
 		ls := []lsItem{}
-
 		for _, item := range resp.Result {
 			tmp := lsItem{
-				Timestamp:           ptypes.TimestampString(item.Timestamp),
+				Timestamp:           time.Now().Unix(),
 				RxPacketsReceived:   item.RxPacketsReceived,
 				RxPacketsReceivedOK: item.RxPacketsReceivedOk,
 				TxPacketsReceived:   item.TxPacketsReceived,
@@ -70,9 +71,48 @@ func GatewayStatsRespFromPb(resp *pb.GetGatewayStatsResponse, err error) (respBt
 		}
 
 		toReturn.Result = ls
+		respBts, _ = json.Marshal(toReturn)
 
 	}
 
-	respBts, _ = json.Marshal(toReturn)
+	return respBts
+}
+
+type DeviceStatReq struct {
+	DeviceId string `json:"device_id"`
+}
+type DeviceStatResp struct {
+	Id      string `json:"id"`
+	Packets int64  `json:"packets"`
+}
+
+func DeviceStatsReqFromBytes(input []byte) (DeviceStatReq, error) {
+	tr := DeviceStatReq{}
+	err := json.Unmarshal(input, &tr)
+	if err != nil {
+		return DeviceStatReq{}, InvalidJsonErr
+	}
+	return tr, nil
+}
+
+func DeviceStatsRespToBts(input []DeviceStatResp, err error) (respBts []byte) {
+	toReturn := struct {
+		DefaultResp
+		Count  int              `json:"count"`
+		Result []DeviceStatResp `json:"result"`
+	}{}
+	toReturn.SetCmd("get_device_stat_resp")
+
+	if err != nil {
+		tr := DefaultResp{Cmd: "get_device_stat_resp"}
+		tr.SetErr(err)
+		respBts, _ = json.Marshal(tr)
+	} else {
+		toReturn.Status = true
+		toReturn.Count = len(input)
+		toReturn.Result = input
+		respBts, _ = json.Marshal(toReturn)
+	}
+
 	return respBts
 }

@@ -27,16 +27,23 @@ func fromTimeStamp(input *timestamp.Timestamp) (res string) {
 	tm := time.Unix(input.Seconds, int64(input.GetNanos()))
 	return tm.Format(TimeFormat)
 }
+func fromTimeStampToUnix(input *timestamp.Timestamp) (res int64) {
+	if input == nil {
+		return 0
+	}
+	tm := time.Unix(input.Seconds, int64(input.GetNanos()))
+	return tm.Unix()
+}
 
 func GatewayListRespFromPb(resp *pb.ListGatewayResponse, err error) (respBts []byte) {
 	type lsItem struct {
 		Id          string `json:"id"`
 		Name        string `json:"name"`
 		Description string `json:"description"`
-		CreatedAt   string `json:"createdAt"`
-		UpdatedAt   string `json:"updatedAt"`
-		FirstSeenAt string `json:"firstSeenAt"`
-		LastSeenAt  string `json:"lastSeenAt"`
+		CreatedAt   int64  `json:"createdAt"`
+		UpdatedAt   int64  `json:"updatedAt"`
+		FirstSeenAt int64  `json:"firstSeenAt"`
+		LastSeenAt  int64  `json:"lastSeenAt"`
 		Connected   bool   `json:"connected"`
 	}
 
@@ -68,10 +75,10 @@ func GatewayListRespFromPb(resp *pb.ListGatewayResponse, err error) (respBts []b
 				Id:          gw.Id,
 				Name:        gw.Name,
 				Description: gw.Description,
-				CreatedAt:   fromTimeStamp(gw.CreatedAt),
-				UpdatedAt:   fromTimeStamp(gw.UpdatedAt),
-				FirstSeenAt: fromTimeStamp(gw.FirstSeenAt),
-				LastSeenAt:  fromTimeStamp(gw.LastSeenAt),
+				CreatedAt:   fromTimeStampToUnix(gw.CreatedAt),
+				UpdatedAt:   fromTimeStampToUnix(gw.UpdatedAt),
+				FirstSeenAt: fromTimeStampToUnix(gw.FirstSeenAt),
+				LastSeenAt:  fromTimeStampToUnix(gw.LastSeenAt),
 				Connected:   connected,
 			}
 			ls = append(ls, tmp)
@@ -165,28 +172,28 @@ func GetGatewayRespFromPb(resp *pb.GetGatewayResponse, err error) (respBts []byt
 		Id          string `json:"id"`
 		Name        string `json:"name"`
 		Description string `json:"description"`
-		CreatedAt   string `json:"createdAt"`
-		UpdatedAt   string `json:"updatedAt"`
-		FirstSeenAt string `json:"firstSeenAt"`
-		LastSeenAt  string `json:"lastSeenAt"`
+		CreatedAt   int64  `json:"createdAt"`
+		UpdatedAt   int64  `json:"updatedAt"`
+		FirstSeenAt int64  `json:"firstSeenAt"`
+		LastSeenAt  int64  `json:"lastSeenAt"`
 		Connected   bool   `json:"connected"`
 	}{}
 	toReturn.SetCmd("get_gateway_resp")
 
 	if err != nil {
-		toReturn := DefaultResp{Cmd:"get_gateway_resp" }
+		toReturn := DefaultResp{Cmd: "get_gateway_resp"}
 		toReturn.SetErr(err)
-		respBts,_ = json.Marshal(toReturn)
+		respBts, _ = json.Marshal(toReturn)
 
 	} else {
 		toReturn.Status = true
 		toReturn.Id = resp.Gateway.Id
 		toReturn.Name = resp.Gateway.Name
 		toReturn.Description = resp.Gateway.Description
-		toReturn.CreatedAt = fromTimeStamp(resp.CreatedAt)
-		toReturn.UpdatedAt = fromTimeStamp(resp.UpdatedAt)
-		toReturn.FirstSeenAt = fromTimeStamp(resp.FirstSeenAt)
-		toReturn.LastSeenAt = fromTimeStamp(resp.LastSeenAt)
+		toReturn.CreatedAt = fromTimeStampToUnix(resp.CreatedAt)
+		toReturn.UpdatedAt = fromTimeStampToUnix(resp.UpdatedAt)
+		toReturn.FirstSeenAt = fromTimeStampToUnix(resp.FirstSeenAt)
+		toReturn.LastSeenAt = fromTimeStampToUnix(resp.LastSeenAt)
 
 		var connected bool
 		lastSeen, err := ptypes.Timestamp(resp.LastSeenAt)

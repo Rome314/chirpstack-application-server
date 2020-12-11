@@ -142,7 +142,7 @@ func GetMetricsForAllTime(name string) ([]MetricsRecord, error) {
 	keys, err := RedisClient().Keys(key).Result()
 	if len(keys) == 0 {
 		err = fmt.Errorf("NOT_FOUND: %w", err)
-		return nil, err
+		return nil, nil
 	}
 	pipe := RedisClient().Pipeline()
 	var vals []*redis.StringStringMapCmd

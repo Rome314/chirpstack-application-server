@@ -33,7 +33,7 @@ func GetDevisesListResp(resp *pb.ListDeviceResponse, err error) (respBts []byte)
 		Name          string `json:"name"`
 		ApplicationID string `json:"applicationID"`
 		Description   string `json:"description"`
-		LasSeenAt     string `json:"lastSeenAt"`
+		LasSeenAt     int64 `json:"lastSeenAt"`
 	}
 
 	toReturn := struct {
@@ -53,7 +53,7 @@ func GetDevisesListResp(resp *pb.ListDeviceResponse, err error) (respBts []byte)
 				Name:          device.Name,
 				ApplicationID: strconv.Itoa(int(device.ApplicationId)),
 				Description:   device.Description,
-				LasSeenAt:     fromTimeStamp(device.LastSeenAt),
+				LasSeenAt:     fromTimeStampToUnix(device.LastSeenAt),
 			}
 			ls = append(ls, tmp)
 		}
@@ -217,7 +217,7 @@ func GetDeviceRespFromPb(err error, aType string, device *pb.GetDeviceResponse, 
 		ApplicationID string  `json:"applicationID,omitempty"`
 		Name          string  `json:"name,omitempty"`
 		Description   string  `json:"description,omitempty"`
-		LastSeenAt    string  `json:"lastSeenAt,omitempty"`
+		LastSeenAt    int64  `json:"lastSeenAt,omitempty"`
 		Activation    string  `json:"activation,omitempty"`
 		Keys          keyItem `json:"keys,omitempty"`
 	}{}
@@ -233,7 +233,7 @@ func GetDeviceRespFromPb(err error, aType string, device *pb.GetDeviceResponse, 
 		toReturn.ApplicationID = devId
 		toReturn.Name = device.Device.Name
 		toReturn.Description = device.Device.Description
-		toReturn.LastSeenAt = fromTimeStamp(device.LastSeenAt)
+		toReturn.LastSeenAt = fromTimeStampToUnix(device.LastSeenAt)
 		toReturn.Activation = aType
 
 		var k keyItem
