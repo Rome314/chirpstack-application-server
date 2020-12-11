@@ -49,15 +49,103 @@ type rxJson struct {
 	GatewayID string  `json:"gatewayID"`
 }
 
-func (r *Repo) GetPackets(devEUI string,limit, offset int) (resp []adapters.Uplink, err error) {
+const (
+	justStart = 1
+	justEnd   = 2
+	all       = 3
+	nothing   = 4
+)
+
+func (r *Repo) GetStats(input adapters.DeviceStatReq) (resp []adapters.DeviceStatResp, err error) {
+	resp = []adapters.DeviceStatResp{}
+
+	var rows *sql.Rows
+
+	if input.DeviceId == "" {
+		query := `SELECT dev_eui AS id,count(1)AS packets FROM device_up GROUP BY dev_eui ORDER BY id DESC`
+		rows, err = r.db.Query(query)
+	} else {
+
+		id := &lorawan.EUI64{}
+		_ = id.UnmarshalText([]byte(input.DeviceId))
+
+		query := `SELECT dev_eui AS id,count(1)AS packets FROM device_up WHERE dev_eui = $1 GROUP BY dev_eui;`
+		rows, err = r.db.Query(query, id)
+	}
+
+	if err != nil {
+		err = fmt.Errorf("SQL: %v", err)
+		return
+	}
+
+	for rows.Next() {
+		var id []byte
+		var packets sql.NullInt64
+		err = rows.Scan(&id, &packets)
+		if err != nil {
+			log.Error(err)
+			continue
+		}
+		t := &lorawan.EUI64{}
+		err = t.Scan(id)
+		if err != nil {
+			log.Error(err)
+			continue
+		}
+
+		tmp := adapters.DeviceStatResp{
+			Id:      t.String(),
+			Packets: packets.Int64,
+		}
+		resp = append(resp, tmp)
+	}
+	return
+}
+
+func (r *Repo) GetPackets(input adapters.GetEventsReq) (resp []adapters.Uplink, err error) {
 	resp = []adapters.Uplink{}
 
 	id := &lorawan.EUI64{}
-	_ = id.UnmarshalText([]byte(devEUI))
+	_ = id.UnmarshalText([]byte(input.DevEui))
 
-	query := fmt.Sprintf(`SELECT received_at,device_name,application_id,frequency,dr,adr,f_cnt,f_port,data,rx_info from device_up WHERE dev_eui = $1 LIMIT %d OFFSET %d`,limit,offset)
+	limOffset := fmt.Sprintf(` ORDER BY received_at DESC  LIMIT %d OFFSET %d;`, input.Limit, input.Offset)
+	query := fmt.Sprintf(`SELECT received_at,device_name,application_id,frequency,dr,adr,f_cnt,f_port,data,rx_info 
+								FROM device_up 
+								WHERE dev_eui = $1`)
 
-	rows, err := r.db.Query(query, id)
+	mode := 0
+
+	if input.StartTimestamp.Unix() != 0 && input.EndTimestamp.Unix() != 0 {
+		mode = all
+	} else if input.StartTimestamp.Unix() == 0 && input.EndTimestamp.Unix() == 0 {
+		mode = nothing
+	} else if input.StartTimestamp.Unix() != 0 && input.EndTimestamp.Unix() == 0 {
+		mode = justStart
+	} else {
+		mode = justEnd
+	}
+
+	var rows *sql.Rows
+
+	switch mode {
+	case all:
+		query += " AND received_at >= $2 AND received_at <= $3" + limOffset
+		rows, err = r.db.Query(query, id, input.StartTimestamp, input.EndTimestamp)
+		break
+	case nothing:
+		query += limOffset
+		rows, err = r.db.Query(query, id)
+		break
+	case justStart:
+		query += " AND received_at >= $2" + limOffset
+		rows, err = r.db.Query(query, id, input.StartTimestamp)
+		break
+	case justEnd:
+		query += " AND received_at <= $2" + limOffset
+		rows, err = r.db.Query(query, id, input.EndTimestamp)
+		break
+	}
+
 	if err != nil {
 		err = errors.New("could not get rows")
 		return
@@ -94,16 +182,19 @@ func (r *Repo) GetPackets(devEUI string,limit, offset int) (resp []adapters.Upli
 
 		ap := strconv.Itoa(int(appId.Int32))
 
+		fr := adapters.FloatFrequency(frequency.Int32)
 		tmp := adapters.Uplink{
 			ApplicationID: ap,
 			DeviceName:    deviceName.String,
-			DevEUI:        devEUI,
+			DevEUI:        input.DevEui,
 			GatewayID:     gw,
 			Time:          recieved.Time.Format(adapters.TimeFormat),
+			TimeUnix:          recieved.Time.Unix(),
 			RSSI:          rssi,
 			LoRaSNR:       lorasnr,
 			Channel:       0,
 			Frequency:     uint32(frequency.Int32),
+			FrequencyFl:   fr,
 			Adr:           adr.Bool,
 			Dr:            uint32(dr.Int32),
 			FCnt:          uint32(fcnt.Int32),
@@ -112,10 +203,6 @@ func (r *Repo) GetPackets(devEUI string,limit, offset int) (resp []adapters.Upli
 		}
 		resp = append(resp, tmp)
 
-	}
-
-	if len(resp) == 0{
-		return nil, fmt.Errorf("not found")
 	}
 
 	return resp, nil

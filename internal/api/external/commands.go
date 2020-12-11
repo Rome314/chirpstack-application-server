@@ -215,17 +215,30 @@ func (r *Realization) doGatewayStat(cmd string, ctx context.Context, input []byt
 	}
 	resp, err := r.Api.Gateway.GetStats(ctx, req)
 	return adapters.GatewayStatsRespFromPb(resp, err)
-
 }
+
 func (r *Realization) doGetData(cmd string, ctx context.Context, input []byte) (output []byte) {
 	if r.pgEvents == nil {
 		return adapters.GetDefaultRespFromError(cmd, fmt.Errorf("database is disabled"))
 	}
-	devEUI, limit, offset, err := adapters.GetEventsReqFromBts(input)
+	in, err := adapters.GetEventsReqFromBts(input)
 	if err != nil {
 		return adapters.GetDefaultRespFromError(cmd, err)
 	}
-	resp, err := r.pgEvents.GetPackets(devEUI, limit, offset)
+	resp, err := r.pgEvents.GetPackets(in)
 
 	return adapters.GetEventsRespFromList(resp, err)
+}
+
+func (r *Realization) doGetDeviceStat(cmd string, ctx context.Context, input []byte) (output []byte) {
+	if r.pgEvents == nil {
+		return adapters.GetDefaultRespFromError(cmd, fmt.Errorf("database is disabled"))
+	}
+	in, err := adapters.DeviceStatsReqFromBytes(input)
+	if err != nil {
+		return adapters.GetDefaultRespFromError(cmd, err)
+	}
+	resp, err := r.pgEvents.GetStats(in)
+
+	return adapters.DeviceStatsRespToBts(resp, err)
 }

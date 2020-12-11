@@ -1,7 +1,9 @@
 package adapters
 
 import (
+	"encoding/hex"
 	"strconv"
+	"time"
 
 	pb "github.com/brocaar/chirpstack-api/go/v3/as/integration"
 	"github.com/brocaar/lorawan"
@@ -13,16 +15,19 @@ type Uplink struct {
 	DeviceName    string  `json:"deviceName"`
 	DevEUI        string  `json:"devEUI"`
 	GatewayID     string  `json:"gatewayID"`
-	Time          string  `json:"time"`
+	Time          string  `json:"-"`
+	TimeUnix      int64   `json:"time"`
 	RSSI          int32   `json:"RSSI"`
 	LoRaSNR       float64 `json:"loRaSNR"`
 	Channel       uint32  `json:"channel"`
-	Frequency     uint32  `json:"frequency"`
+	Frequency     uint32  `json:"-"`
+	FrequencyFl   float64 `json:"frequency"`
 	Adr           bool    `json:"adr"`
 	Dr            uint32  `json:"dr"`
 	FCnt          uint32  `json:"fCnt"`
 	FPort         uint32  `json:"fPort"`
-	Data          []byte  `json:"data"`
+	Data          []byte  `json:"-"`
+	DataStr       string  `json:"data"`
 }
 
 func UplinkEventFromPb(event pb.UplinkEvent) (resp Uplink) {
@@ -30,7 +35,6 @@ func UplinkEventFromPb(event pb.UplinkEvent) (resp Uplink) {
 	copy(devEUI[:], event.DevEui)
 
 	var gw lorawan.EUI64
-	var time string
 	var rssi int32
 	var lorasnr float64
 	var channel uint32
@@ -39,7 +43,6 @@ func UplinkEventFromPb(event pb.UplinkEvent) (resp Uplink) {
 	if event.RxInfo != nil && len(event.RxInfo) != 0 {
 		item := event.RxInfo[0]
 		copy(gw[:], item.GatewayId)
-		time = fromTimeStamp(item.Time)
 		rssi = item.Rssi
 		lorasnr = item.LoraSnr
 		channel = item.Channel
@@ -49,22 +52,26 @@ func UplinkEventFromPb(event pb.UplinkEvent) (resp Uplink) {
 		frequency = event.TxInfo.Frequency
 	}
 
+	fr := FloatFrequency(int32(frequency))
+
+	dataStr := hex.EncodeToString(event.Data)
+
 	toReturn := Uplink{
 		Cmd:           "rx_resp",
 		ApplicationID: strconv.FormatUint(event.ApplicationId, 10),
 		DeviceName:    event.DeviceName,
 		DevEUI:        devEUI.String(),
 		GatewayID:     gw.String(),
-		Time:          time,
+		TimeUnix:      time.Now().Unix(),
 		RSSI:          rssi,
 		LoRaSNR:       lorasnr,
 		Channel:       channel,
-		Frequency:     frequency,
+		FrequencyFl:   fr,
 		Adr:           event.Adr,
 		Dr:            event.Dr,
 		FCnt:          event.FCnt,
 		FPort:         event.FPort,
-		Data:          event.Data,
+		DataStr:       dataStr,
 	}
 
 	return toReturn
