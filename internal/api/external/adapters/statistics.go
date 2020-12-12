@@ -79,7 +79,7 @@ func GatewayStatsRespFromPb(resp *pb.GetGatewayStatsResponse, err error) (respBt
 }
 
 type DeviceStatReq struct {
-	DeviceId string `json:"device_id"`
+	DeviceId string `json:"devEUI"`
 }
 type DeviceStatResp struct {
 	Id      string `json:"id"`

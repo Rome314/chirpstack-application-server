@@ -2,6 +2,7 @@ package postgresEvents
 
 import (
 	"database/sql"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -181,7 +182,7 @@ func (r *Repo) GetPackets(input adapters.GetEventsReq) (resp []adapters.Uplink, 
 		}
 
 		ap := strconv.Itoa(int(appId.Int32))
-
+		dataStr := hex.EncodeToString(data)
 		fr := adapters.FloatFrequency(frequency.Int32)
 		tmp := adapters.Uplink{
 			ApplicationID: ap,
@@ -200,6 +201,7 @@ func (r *Repo) GetPackets(input adapters.GetEventsReq) (resp []adapters.Uplink, 
 			FCnt:          uint32(fcnt.Int32),
 			FPort:         uint32(fport.Int32),
 			Data:          data,
+			DataStr: dataStr,
 		}
 		resp = append(resp, tmp)
 
