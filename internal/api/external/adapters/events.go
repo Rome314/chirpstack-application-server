@@ -2,6 +2,7 @@ package adapters
 
 import (
 	"encoding/hex"
+	"encoding/json"
 	"strconv"
 	"time"
 
@@ -28,6 +29,7 @@ type Uplink struct {
 	FPort         uint32  `json:"fPort"`
 	Data          []byte  `json:"-"`
 	DataStr       string  `json:"data"`
+	Encoded       string  `json:"encoded"`
 }
 
 func UplinkEventFromPb(event pb.UplinkEvent) (resp Uplink) {
@@ -39,6 +41,7 @@ func UplinkEventFromPb(event pb.UplinkEvent) (resp Uplink) {
 	var lorasnr float64
 	var channel uint32
 	var frequency uint32
+	var encoded string
 
 	if event.RxInfo != nil && len(event.RxInfo) != 0 {
 		item := event.RxInfo[0]
@@ -56,6 +59,17 @@ func UplinkEventFromPb(event pb.UplinkEvent) (resp Uplink) {
 
 	dataStr := hex.EncodeToString(event.Data)
 
+	if event.ObjectJson != "" {
+		bts := []byte(event.ObjectJson)
+		tmp := struct {
+			Msg string `json:"msg"`
+		}{}
+
+		_ = json.Unmarshal(bts, &tmp)
+		encoded = tmp.Msg
+
+	}
+
 	toReturn := Uplink{
 		Cmd:           "rx_resp",
 		ApplicationID: strconv.FormatUint(event.ApplicationId, 10),
@@ -72,6 +86,7 @@ func UplinkEventFromPb(event pb.UplinkEvent) (resp Uplink) {
 		FCnt:          event.FCnt,
 		FPort:         event.FPort,
 		DataStr:       dataStr,
+		Encoded:       encoded,
 	}
 
 	return toReturn

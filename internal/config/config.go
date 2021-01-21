@@ -214,6 +214,8 @@ type IntegrationPostgreSQLConfig struct {
 	DSN                string `json:"dsn"`
 	MaxOpenConnections int    `mapstructure:"max_open_connections"`
 	MaxIdleConnections int    `mapstructure:"max_idle_connections"`
+	MaxRows            int    `mapstructure:"max_rows"`
+	LimitTable         string `mapstructure:"limit_table"`
 }
 
 // IntegrationAMQPConfig holds the AMQP integration configuration.

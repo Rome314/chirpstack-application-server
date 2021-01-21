@@ -4,8 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"time"
 
+	"github.com/go-redis/redis/v7"
 	"github.com/gofrs/uuid"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/jmoiron/sqlx"
@@ -16,16 +18,18 @@ import (
 
 	pb "github.com/brocaar/chirpstack-api/go/v3/as/integration"
 	"github.com/brocaar/chirpstack-api/go/v3/gw"
+	"github.com/brocaar/lorawan"
+
 	"github.com/brocaar/chirpstack-application-server/internal/config"
 	"github.com/brocaar/chirpstack-application-server/internal/integration/models"
 	"github.com/brocaar/chirpstack-application-server/internal/logging"
 	"github.com/brocaar/chirpstack-application-server/internal/storage"
-	"github.com/brocaar/lorawan"
 )
 
 // Integration implements a PostgreSQL integration.
 type Integration struct {
 	db *sqlx.DB
+	r  redis.UniversalClient
 }
 
 // New creates a new PostgreSQL integration.
@@ -47,9 +51,54 @@ func New(conf config.IntegrationPostgreSQLConfig) (*Integration, error) {
 	d.SetMaxOpenConns(conf.MaxOpenConnections)
 	d.SetMaxIdleConns(conf.MaxIdleConnections)
 
-	return &Integration{
+	i := &Integration{
 		db: d,
-	}, nil
+		r:  storage.RedisClient(),
+	}
+	err = i.prepareLimit(conf)
+	if err != nil {
+		return nil, err
+	}
+	return i, nil
+}
+
+func (i *Integration) prepareLimit(c config.IntegrationPostgreSQLConfig) (err error) {
+	tableName := "device_up_clone"
+	if c.LimitTable != "" {
+		tableName = c.LimitTable
+	}
+
+	var query string
+	if c.MaxRows == 0 {
+		query = fmt.Sprintf(
+			`DROP  FUNCTION  IF EXISTS  public.check_number_of_row() CASCADE;
+					DROP TRIGGER IF EXISTS tr_check_number_of_row ON  %s;`, tableName)
+	} else {
+		l := c.MaxRows
+		query = fmt.Sprintf(
+			`CREATE OR REPLACE FUNCTION public.check_number_of_row()
+					RETURNS TRIGGER AS
+					$body$
+					BEGIN
+						-- replace 100 by the number of rows you want
+						IF (SELECT count(*) FROM %s) > %d
+						THEN 
+							delete from %s where id not in (select id from %s order by received_at DESC LIMIT %d);
+						END IF;
+						RETURN NULL;
+					END;
+					$body$
+					LANGUAGE plpgsql;
+					DROP TRIGGER IF EXISTS tr_check_number_of_row ON  %s;
+					CREATE TRIGGER tr_check_number_of_row
+						AFTER INSERT ON %s
+						FOR EACH ROW
+						EXECUTE PROCEDURE public.check_number_of_row ();`, tableName, l, tableName, tableName, l, tableName, tableName)
+	}
+
+	_, err = i.db.Exec(query)
+	return err
+
 }
 
 // Close closes the integration.
@@ -137,6 +186,12 @@ func (i *Integration) HandleUplinkEvent(ctx context.Context, _ models.Integratio
 		"dev_eui": devEUI,
 		"ctx_id":  ctx.Value(logging.ContextIDKey),
 	}).Info("integration/postgresql: event stored")
+
+	devId := devEUI.String()
+	battery := float64(pl.Data[1])
+
+	key := fmt.Sprintf("battery_%s", devId)
+	i.r.Set(key, battery, -1)
 
 	return nil
 }
