@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    <link rel="stylesheet" href="../public/css/style.css">
+    <link rel="stylesheet" href="../public/css/gateway.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- <script src="https://kit.fontawesome.com/4c8293ed08.js"></script> -->
+    <!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+  </head>
+  <body>
+
+    <div class="header">
+      <div class="header-content">
+        <ul class="category-menu">
+          <li class="active"><a href="/gateway">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g clip-path="url(#clip0)">
+              <path d="M5.40712 19.072C2.86448 17.0459 1.40625 14.0206 1.40625 10.7718C1.40625 7.5231 2.86439 4.49783 5.40694 2.4718C5.71064 2.22979 5.76061 1.78738 5.51859 1.48372C5.27662 1.18002 4.83422 1.13 4.53052 1.37202C1.65131 3.66641 0 7.0925 0 10.7718C0 14.4513 1.65136 17.8774 4.53075 20.1718C4.83427 20.4137 5.27672 20.3638 5.51883 20.06C5.7608 19.7563 5.71083 19.314 5.40712 19.072Z" fill="#8E94A7"/>
+              <path d="M19.4695 1.37206C19.1658 1.13009 18.7235 1.18006 18.4815 1.48376C18.2394 1.78747 18.2894 2.22983 18.5931 2.47184C21.1356 4.49792 22.5937 7.52314 22.5937 10.7718C22.5937 14.0205 21.1356 17.0457 18.5931 19.0718C18.2894 19.3138 18.2394 19.7562 18.4814 20.0599C18.7235 20.3637 19.166 20.4134 19.4695 20.1716C22.3487 17.8772 24 14.4511 24 10.7718C24 7.09255 22.3487 3.66645 19.4695 1.37206Z" fill="#8E94A7"/>
+              <path d="M7.75007 16.1371C6.10167 14.8259 5.15625 12.8703 5.15625 10.7718C5.15625 8.6733 6.10167 6.71772 7.75012 5.40653C8.05401 5.1648 8.10445 4.72249 7.86267 4.41855C7.62089 4.11461 7.17857 4.06422 6.87468 4.30595C4.88892 5.8855 3.75 8.24219 3.75 10.7718C3.75 13.3015 4.88892 15.6581 6.87464 17.2376C7.17876 17.4795 7.62098 17.4288 7.86262 17.125C8.10435 16.8212 8.05396 16.3788 7.75007 16.1371Z" fill="#8E94A7"/>
+              <path d="M17.1253 4.30606C16.8214 4.06437 16.3791 4.11471 16.1373 4.41865C15.8956 4.72254 15.946 5.1649 16.2499 5.40663C17.8983 6.71778 18.8437 8.67331 18.8437 10.7719C18.8437 12.8704 17.8983 14.826 16.2498 16.1371C15.9459 16.3789 15.8955 16.8212 16.1373 17.1251C16.3792 17.4292 16.8216 17.4793 17.1253 17.2377C19.111 15.6582 20.2499 13.3015 20.2499 10.7719C20.2499 8.24224 19.111 5.88556 17.1253 4.30606Z" fill="#8E94A7"/>
+              <path d="M12 7.26562C10.0615 7.26562 8.48438 8.84273 8.48438 10.7812C8.48438 12.479 9.69412 13.8995 11.2969 14.2261V22.0781C11.2969 22.4664 11.6117 22.7812 12 22.7812C12.3883 22.7812 12.7031 22.4664 12.7031 22.0781V14.2261C14.3059 13.8995 15.5156 12.4791 15.5156 10.7812C15.5156 8.84273 13.9385 7.26562 12 7.26562ZM12 12.8906C10.8369 12.8906 9.89062 11.9444 9.89062 10.7812C9.89062 9.61814 10.8369 8.67188 12 8.67188C13.1631 8.67188 14.1094 9.61814 14.1094 10.7812C14.1094 11.9444 13.1631 12.8906 12 12.8906Z" fill="#8E94A7"/>
+              </g>
+              <defs>
+              <clipPath id="clip0">
+              <rect width="24" height="24" fill="white"/>
+              </clipPath>
+              </defs>
+            </svg>Gateways</a>
+          </li>
+          <li><a href="/device">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17.1665 6.16663H6.83315C6.46649 6.16663 6.1665 6.46661 6.1665 6.83327V17.1666C6.1665 17.5333 6.46649 17.8333 6.83315 17.8333H17.1665C17.5332 17.8333 17.8332 17.5333 17.8332 17.1666V6.83332C17.8332 6.46666 17.5332 6.16663 17.1665 6.16663ZM16.4998 16.5H7.4998V14H8.83314C9.19981 14 9.49979 13.7 9.49979 13.3333C9.49979 12.9667 9.19981 12.6667 8.83314 12.6667H7.4998V11.3333H10.1665C10.5332 11.3333 10.8331 11.0333 10.8331 10.6667C10.8331 10.3 10.5332 10 10.1665 10H7.4998V7.50002H16.4998V16.5Z" fill="#0346F2"/>
+              <path d="M24 10.2667C24 9.90001 23.7 9.60003 23.3334 9.60003H21.2V7.50004H23.3334C23.7 7.50004 24 7.20006 24 6.83339C24 6.46673 23.7 6.16675 23.3334 6.16675H21.2V4.73336C21.2 3.66668 20.3333 2.80005 19.2667 2.80005H17.8333V0.666648C17.8333 0.299985 17.5334 0 17.1667 0C16.8 0 16.5001 0.299985 16.5001 0.666648V2.8H14.3667V0.666648C14.3667 0.299985 14.0667 0 13.7 0C13.3333 0 13.0334 0.299985 13.0334 0.666648V2.8H10.9V0.666648C10.9 0.299985 10.6 0 10.2334 0C9.8667 0 9.56671 0.299985 9.56671 0.666648V2.8H7.50004V0.666648C7.49999 0.299985 7.20001 0 6.83335 0C6.46668 0 6.1667 0.299985 6.1667 0.666648V2.8H4.73336C3.66668 2.8 2.80005 3.66668 2.80005 4.73331V6.16665H0.666648C0.299985 6.16665 0 6.46668 0 6.83335C0 7.20001 0.299985 7.49999 0.666648 7.49999H2.8V9.63334H0.666648C0.299985 9.63334 0 9.93333 0 10.3C0 10.6667 0.299985 10.9666 0.666648 10.9666H2.8V13.1H0.666648C0.299985 13.1 0 13.4 0 13.7667C0 14.1333 0.299985 14.4333 0.666648 14.4333H2.8V16.5H0.666648C0.299985 16.5 0 16.8 0 17.1667C0 17.5334 0.299985 17.8333 0.666648 17.8333H2.8V19.2667C2.8 20.3334 3.66668 21.2 4.73331 21.2H6.16665V23.3334C6.16665 23.7 6.46663 24 6.8333 24C7.19996 24 7.49995 23.7 7.49995 23.3334V21.2H9.6333V23.3334C9.6333 23.7 9.93328 24 10.2999 24C10.6666 24 10.9666 23.7 10.9666 23.3334V21.2H13.0999V23.3334C13.0999 23.7 13.3999 24 13.7666 24C14.1333 24 14.4332 23.7 14.4332 23.3334V21.2H16.4999V23.3334C16.4999 23.7 16.7999 24 17.1666 24C17.5332 24 17.8332 23.7 17.8332 23.3334V21.2H19.2665C20.3332 21.2 21.1999 20.3333 21.1999 19.2667V17.8333H23.3332C23.6999 17.8333 23.9999 17.5334 23.9999 17.1667C23.9999 16.8 23.6999 16.5001 23.3332 16.5001H21.1999V14.3667H23.3332C23.6999 14.3667 23.9999 14.0667 23.9999 13.7C23.9999 13.3333 23.6999 13.0334 23.3332 13.0334H21.1999V10.9H23.3332V10.9333C23.7 10.9333 24 10.6333 24 10.2667ZM19.9 19.2667H19.8667C19.8667 19.6 19.6 19.8667 19.2667 19.8667H4.73336C4.40001 19.8667 4.13334 19.6 4.13334 19.2667V4.73336C4.13334 4.40001 4.40001 4.13334 4.73336 4.13334H19.3001C19.6334 4.13334 19.9001 4.40001 19.9001 4.73336V19.2667H19.9Z" fill="#0346F2"/>
+            </svg>Devices</a>
+          </li>
+        </ul>
+        <div class="user">
+          <a href="#">
+            <img src="../public/img/header/avatar.svg" alt="">
+            <div class="username"></div>
+          </a>
+          <div class="dropdown-menu">
+            <img class="menu-icon" src="../public/img/header/chevron-down.svg" alt="">
+            <ul class="dropdown-menu-content">
+              <li class="menu-item_change-password button-popup-summoner" data-popup="settingsPopup">Settings</li>
+              <li class="menu-item_logout">Logout</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Title h1 -->
+    <h1>
+      <a href="/gateway">Gateways</a>
+      <img src="../public/img/header/chevron-right.svg" alt="">
+      <div class="name"></div>
+    </h1>
+    <!-- Table -->
+    <div class="card">
+      <div class="container">
+        <h2>Gateway overview</h2>
+        <div class="content">
+          <div class="group">
+            <div class="subgroup">
+              <div class="titles">
+                <div class="row">Gateway name</div>
+                <div class="row">Description</div>
+              </div>
+              <div class="values">
+                <div class="row"><div class="value" data-field="gatewayName"></div></div>
+                <div class="row"><div class="value" data-field="description"></div></div>
+              </div>
+            </div>
+            <div class="subgroup">
+              <div class="titles">
+                <div class="row">Last seen</div>
+                <div class="row">Received frames</div>
+                <div class="row">Transmitted frames</div>
+              </div>
+              <div class="values">
+                <div class="row"><div class="status"></div><div class="value" data-field="lastSeenAt"></div></div>
+                <div class="row"><div class="value" data-field="receivedFrames"></div></div>
+                <div class="row"><div class="value" data-field="transmittedFrames"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="group">
+            <div class="input" data-field="hex">
+              <div class="title">Gateway EUI</div>
+              <div class="input-field">
+                <div class="controls left-controls">
+                </div>
+                <input placeholder="__ __ __ __ __ __ __ __" type="text" disabled name="gatewayEUI" class="hex-input " value="">
+                <div class="controls right-controls separate-controls">
+                  <div class="control control-copy" data-tooltip="Copy">
+                    <img src="../public/img/input/copy-icon.svg" alt="">
+                  </div>
+                </div>
+              </div>
+              <div class="error"><img src="../public/img/input/error-icon.svg" alt=""><span class="text"></span></div>
+            </div>
+            <div class="input" data-field="hex" style="display: none">
+              <div class="title">Gateway EUI</div>
+              <div class="input-field">
+                <div class="controls left-controls">
+                </div>
+                <input placeholder="" type="text" disabled name="id" class="" value="">
+                <div class="controls right-controls separate-controls">
+                </div>
+              </div>
+              <div class="error"><img src="../public/img/input/error-icon.svg" alt=""><span class="text"></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="btn-group">
+          <input type="button" class="button button-delete button-popup-summoner" data-popup="deleteGatewayPopup" name="" value="Delete this gateway">
+        </div>
+      </div>
+    </div>
+
+    <div id="deleteGatewayPopup" class="popup-wrapper delete-popup" style="display: none">
+      <div class="popup">
+        <img class="popup-close popup-close-icon" src="../public/img/popup/close-icon.svg" alt="">
+        <h2>Delete <span></span></h2>
+        <span class="text">Delete this gateway from the server?</span>
+        <div class="btn-group">
+          <input class="button popup-close" value="Cancel" type="button">
+          <input class="button button-delete" value="Delete" type="button">
+        </div>
+      </div>
+    </div>
+
+    <div id="gatewayWasDeletedPopup" class="popup-wrapper was-deleted-popup" style="display: none">
+      <div class="popup">
+        <img src="../public/img/popup/ok.svg" alt="">
+        <p class="text product-name"></p>
+        <p class="text text-bold">was deleted</p>
+        <div class="btn-group">
+          <input class="button button-confirm popup-close" value="Confirm" type="button">
+        </div>
+      </div>
+    </div>
+
+    <div id="settingsPopup" class="popup-wrapper" style="display: none">
+      <div class="popup">
+        <img class="popup-close popup-close-icon" src="../../public/img/popup/close-icon.svg" alt="">
+        <form class="popup-form popup-content" action="/user/change" method="PUT">
+          <h2>Change Profile Settings</h2>
+          <div class="input">
+            <div class="title">New username</div>
+            <div class="input-field">
+              <div class="controls left-controls">
+              </div>
+              <input  placeholder="Username" type="text" name="username" class="" value="">
+              <div class="controls right-controls">
+              </div>
+            </div>
+            <div class="error"><img src="../../public/img/input/error-icon.svg" alt=""><span class="text"></span></div>
+          </div>
+          <div class="input">
+            <div class="title">New password</div>
+            <div class="input-field">
+              <input  placeholder="Password" id="pswdInputMaster" type="text" name="password" value="" class="hidden-input linked-input linked-input-master" data-linked-input-id="pswdInputSlave">
+              <div class="controls right-controls">
+                <div class="control control-hidden hidden" data-tooltip="show/hide">
+                  <!-- <img src="../../public/img/input/hidden-icon.svg" alt=""> -->
+                  <svg class="showed" width="17" height="11" viewBox="0 0 17 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.5 0.433105C11.748 0.433105 14.6935 2.21013 16.867 5.0965C17.0443 5.33297 17.0443 5.66334 16.867 5.89981C14.6935 8.78965 11.748 10.5667 8.5 10.5667C5.25197 10.5667 2.30649 8.78965 0.133017 5.90329C-0.0443382 5.66682 -0.0443382 5.33645 0.133017 5.09998C2.30649 2.21013 5.25197 0.433105 8.5 0.433105ZM8.267 9.06786C10.4231 9.20348 12.2036 7.42646 12.068 5.2669C11.9567 3.48639 10.5135 2.04321 8.733 1.93193C6.57692 1.7963 4.79641 3.57333 4.93204 5.73289C5.04679 7.50992 6.48998 8.9531 8.267 9.06786ZM8.37481 7.4195C9.53631 7.49253 10.4961 6.5362 10.4196 5.3747C10.3605 4.4149 9.58152 3.63941 8.62171 3.57681C7.46021 3.50378 6.50041 4.46011 6.57692 5.62161C6.63951 6.58489 7.41848 7.36038 8.37481 7.4195Z" fill="#B0C1F3"/>
+                  </svg>
+                  <svg class="hidden" width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g clip-path="url(#clip0)">
+                      <path d="M8.5 3.43311C11.748 3.43311 14.6935 5.21013 16.867 8.0965C17.0443 8.33297 17.0443 8.66334 16.867 8.89981C14.6935 11.7897 11.748 13.5667 8.5 13.5667C5.25197 13.5667 2.30649 11.7897 0.133017 8.90329C-0.0443382 8.66682 -0.0443382 8.33645 0.133017 8.09998C2.30649 5.21013 5.25197 3.43311 8.5 3.43311ZM8.267 12.0679C10.4231 12.2035 12.2036 10.4265 12.068 8.2669C11.9567 6.48639 10.5135 5.04321 8.733 4.93193C6.57692 4.7963 4.79641 6.57333 4.93204 8.73289C5.04679 10.5099 6.48998 11.9531 8.267 12.0679ZM8.37481 10.4195C9.53631 10.4925 10.4961 9.5362 10.4196 8.3747C10.3605 7.4149 9.58152 6.63941 8.62171 6.57681C7.46021 6.50378 6.50041 7.46011 6.57692 8.62161C6.63951 9.58489 7.41848 10.3604 8.37481 10.4195Z" fill="#B0C1F3"/>
+                      <line x1="15.3536" y1="1.35355" x2="1.35355" y2="15.3536" stroke="#B0C1F3"/>
+                    </g>
+                    <defs>
+                      <clipPath id="clip0">
+                        <rect width="17" height="17" fill="white" transform="matrix(-1 0 0 1 17 0)"/>
+                      </clipPath>
+                    </defs>
+                  </svg>
+                </div>
+              </div>
+            </div>
+             <div class="error"><img src="../../public/img/input/error-icon.svg" alt=""><span class="text"></span></div>
+          </div>
+          <div class="input">
+            <div class="title">Confirm new password</div>
+            <div class="input-field">
+              <input  placeholder="Password" id="pswdInputSlave" type="text" name="passwordConfirm" value="" class="hidden-input linked-input linked-input-slave" data-linked-input-id="pswdInputMaster">
+              <div class="controls right-controls">
+                <div class="control control-hidden hidden" data-tooltip="show/hide">
+                  <!-- <img src="../../public/img/input/hidden-icon.svg" alt=""> -->
+                  <svg class="showed" width="17" height="11" viewBox="0 0 17 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.5 0.433105C11.748 0.433105 14.6935 2.21013 16.867 5.0965C17.0443 5.33297 17.0443 5.66334 16.867 5.89981C14.6935 8.78965 11.748 10.5667 8.5 10.5667C5.25197 10.5667 2.30649 8.78965 0.133017 5.90329C-0.0443382 5.66682 -0.0443382 5.33645 0.133017 5.09998C2.30649 2.21013 5.25197 0.433105 8.5 0.433105ZM8.267 9.06786C10.4231 9.20348 12.2036 7.42646 12.068 5.2669C11.9567 3.48639 10.5135 2.04321 8.733 1.93193C6.57692 1.7963 4.79641 3.57333 4.93204 5.73289C5.04679 7.50992 6.48998 8.9531 8.267 9.06786ZM8.37481 7.4195C9.53631 7.49253 10.4961 6.5362 10.4196 5.3747C10.3605 4.4149 9.58152 3.63941 8.62171 3.57681C7.46021 3.50378 6.50041 4.46011 6.57692 5.62161C6.63951 6.58489 7.41848 7.36038 8.37481 7.4195Z" fill="#B0C1F3"/>
+                  </svg>
+                  <svg class="hidden" width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g clip-path="url(#clip0)">
+                      <path d="M8.5 3.43311C11.748 3.43311 14.6935 5.21013 16.867 8.0965C17.0443 8.33297 17.0443 8.66334 16.867 8.89981C14.6935 11.7897 11.748 13.5667 8.5 13.5667C5.25197 13.5667 2.30649 11.7897 0.133017 8.90329C-0.0443382 8.66682 -0.0443382 8.33645 0.133017 8.09998C2.30649 5.21013 5.25197 3.43311 8.5 3.43311ZM8.267 12.0679C10.4231 12.2035 12.2036 10.4265 12.068 8.2669C11.9567 6.48639 10.5135 5.04321 8.733 4.93193C6.57692 4.7963 4.79641 6.57333 4.93204 8.73289C5.04679 10.5099 6.48998 11.9531 8.267 12.0679ZM8.37481 10.4195C9.53631 10.4925 10.4961 9.5362 10.4196 8.3747C10.3605 7.4149 9.58152 6.63941 8.62171 6.57681C7.46021 6.50378 6.50041 7.46011 6.57692 8.62161C6.63951 9.58489 7.41848 10.3604 8.37481 10.4195Z" fill="#B0C1F3"/>
+                      <line x1="15.3536" y1="1.35355" x2="1.35355" y2="15.3536" stroke="#B0C1F3"/>
+                    </g>
+                    <defs>
+                      <clipPath id="clip0">
+                        <rect width="17" height="17" fill="white" transform="matrix(-1 0 0 1 17 0)"/>
+                      </clipPath>
+                    </defs>
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <div class="error"><img src="../../public/img/input/error-icon.svg" alt=""><span class="text"></span></div>
+          </div>
+          <div class="btn-group">
+            <input class="button button-confirm" value="Confirm" type="button">
+            <input class="button popup-close" value="Cancel" type="button">
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="passwordWasChangedPopup" class="popup-wrapper password-was-changed-popup" style="display: none">
+      <div class="popup">
+        <img src="../public/img/popup/ok.svg" alt="">
+        <p class="text">Password was changed successfully</p>
+        <div class="btn-group">
+          <input class="button button-confirm popup-close" value="Close" type="button">
+        </div>
+      </div>
+    </div>
+
+    <div class="notification">
+      <img class="popup-close popup-close-icon" src="../public/img/popup/close-icon.svg" alt="">
+      <div class="text">
+        Invalid username or password (code: 16)
+      </div>
+    </div>
+
+
+    <!-- Script includes -->
+    <script src="../public/js/general.js"></script>
+    <script src="../public/js/ws-network.js"></script>
+    <script src="../public/js/config.js"></script>
+    <script src="../public/js/ws-network.js"></script>
+    <script src="../public/js/dropdown-menu.js"></script>
+    <script src="../public/js/table.js"></script>
+    <script src="../public/js/input.js"></script>
+    <script src="../public/js/popup.js"></script>
+    <script src="../public/js/form.js"></script>
+    <script src="../public/js/switcher.js"></script>
+    <script src="../public/js/notification.js"></script>
+    <script src="../public/js/card.js"></script>
+    <script src="../public/js/gateway.js"></script>
+    <script src="../public/js/settings-popup.js"></script>
+    <!-- Script includes - End-->
+  </body>
+</html>

@@ -1,0 +1,149 @@
+// out: ../css/style.css, compress: true
+
+//Imports
+* {
+  padding: 0;
+  margin: 0;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: normal;
+}
+
+html{
+  height: 100vh;
+  position: relative;
+}
+
+body{
+  background: #F9F8FC;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 20px;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+a{
+  text-decoration: none;
+}
+
+ul{
+    list-style: none;
+}
+
+h1{
+  display: flex;
+  justify-content: center;
+  margin-top: 65px;
+  margin-bottom: 42px;
+  align-items: center;
+  a{
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 14px;
+    color: #8E94A7;
+    &:hover{
+      text-decoration: underline;
+    }
+  }
+  .name{
+    display: block;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 24px;
+  }
+  img{
+    margin-right: 8px;
+    margin-left: 5px;
+  }
+}
+
+h2{
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  color: #1A1E2C;
+}
+
+.container{
+  @paddingLeft: 20px;
+  @paddingRight: 20px;
+  padding-left: @paddingLeft;
+  padding-right: @paddingRight;
+  width: ~"calc(100% - @{paddingLeft} - @{paddingRight})";
+  max-width: 1070px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+}
+
+@import "header.less";
+@import "input.less";
+@import "table.less";
+@import "popup.less";
+@import "switcher.less";
+@import "notification.less";
+@import "card.less";
+@import "button.less";
+
+
+
+
+//================ Custom Popups
+.password-was-changed-popup{
+  .popup{
+    img{
+      margin: auto;
+      display: block;
+      margin-bottom: 32px;
+    }
+    max-width: 340px;
+    align-items: center;
+    .text{
+      text-align: center;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 24px;
+      color: #333333;
+      &-bold{
+        font-weight: 600;
+      }
+    }
+    .btn-group{
+      margin-top: 30px;
+    }
+  }
+}
+
+
+//==================== other
+.upper-text{
+  text-transform: uppercase;
+}
+
+.table-flexible {
+  flex-grow: 1;
+  overflow: hidden;
+  .container{
+    height: 100%;
+    // position: relative;
+    .table-group{
+      // position: absolute;
+      // height: 100%;
+      max-height: ~"calc(100% - 87px)";
+      display: flex;
+      flex-direction: column;
+      // top: 87px;
+      // bottom: 0;
+      // left: 0;
+      // right: 0;
+      .content{
+        // height: 100%;
+        max-height: ~"calc(100% - 114px)";
+      }
+    }
+  }
+}

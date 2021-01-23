@@ -1,0 +1,183 @@
+[
+  {
+    "id":"v2-f3-2a-xg-bg-hj",
+    "devEUI":"aaaaaaaaaaaaaa",
+    "deviceName": {
+      "value": "Router aaaa2",
+      "link": "http://localhost:3001/device/waterleak/12-f3-2a-xg-bg-hj"
+    },
+    "battery": "n/a",
+    "legalinkMargin": "n/a",
+    "lastSeen":"22.03.2020",
+    "status":"Disconnected",
+    "deviceType": "waterleak",
+    "description":"This is a router",
+    "framesUp":"333",
+    "framesDown":"444",
+    "activationMethod":"ABP",
+    "gatewayEUI":"This is a router",
+    "networkSessionKey":"This is a router",
+    "appSessionKey":"This is a router"
+  },
+  {
+    "id":"34-f3-2a-xg-bg-hj",
+    "devEUI":"cccccccccccc",
+    "deviceName": {
+      "value": "Router N14f1",
+      "link": "http://localhost:3001/device/door/34-f3-2a-xg-bg-hj"
+    },
+    "battery": "n/a",
+    "legalinkMargin": "n/a",
+    "lastSeen":"22.03.2020",
+    "status":"Connected",
+    "deviceType": "door",
+    "description":"This is a router",
+    "framesUp":"333",
+    "framesDown":"444",
+    "activationMethod":"OTAA",
+    "gatewayEUI":"This is a router",
+    "networkSessionKey":"This is a router",
+    "appSessionKey":"This is a router",
+    "appKey": "1234567887654321"
+  },
+  {
+    "id":"24-f3-2a-xg-bg-hj",
+    "devEUI":"33 30 38 33 51 38 82 08",
+    "deviceName": {
+      "value": "Router N14f1",
+      "link": "http://localhost:3001/device/door/24-f3-2a-xg-bg-hj"
+    },
+    "battery": "n/a",
+    "legalinkMargin": "n/a",
+    "lastSeen":"22.03.2020",
+    "status":"Connected",
+    "deviceType": "door",
+    "description":"This is a router",
+    "framesUp":"333",
+    "framesDown":"444",
+    "activationMethod":"ABP",
+    "gatewayEUI":"This is a router",
+    "networkSessionKey":"This is a router",
+    "appSessionKey":"This is a router"
+  },
+  {
+    "id":"54-f3-2a-xg-bg-hj",
+    "devEUI":"33 30 38 33 51 38 82 08",
+    "deviceName": {
+      "value": "Router N14f1",
+      "link": "http://localhost:3001/device/door/54-f3-2a-xg-bg-hj"
+    },
+    "battery": "n/a",
+    "legalinkMargin": "n/a",
+    "lastSeen":"22.03.2020",
+    "status":"Connected",
+    "deviceType": "door",
+    "description":"This is a router",
+    "framesUp":"333",
+    "framesDown":"444",
+    "activationMethod":"ABP",
+    "gatewayEUI":"This is a router",
+    "networkSessionKey":"This is a router",
+    "appSessionKey":"This is a router"
+  },
+  {
+    "id":"64-f3-2a-xg-bg-hj",
+    "devEUI":"bbbbbbbbbbbbb",
+    "deviceName": {
+      "value": "Router N14f1",
+      "link": "http://localhost:3001/device/door/64-f3-2a-xg-bg-hj"
+    },
+    "battery": "n/a",
+    "legalinkMargin": "n/a",
+    "lastSeen":"22.03.2020",
+    "status":"Connected",
+    "deviceType": "door",
+    "description":"This is a router",
+    "framesUp":"333",
+    "framesDown":"444",
+    "activationMethod":"ABP",
+    "gatewayEUI":"This is a router",
+    "networkSessionKey":"This is a router",
+    "appSessionKey":"This is a router"
+  },
+  {
+    "id":"74-f3-2a-xg-bg-hj",
+    "devEUI":"bbbbbbbbbbbbb",
+    "deviceName": {
+      "value": "Router N14f1",
+      "link": "http://localhost:3001/device/door/74-f3-2a-xg-bg-hj"
+    },
+    "battery": "n/a",
+    "legalinkMargin": "n/a",
+    "lastSeen":"22.03.2020",
+    "status":"Connected",
+    "deviceType": "door",
+    "description":"This is a router",
+    "framesUp":"333",
+    "framesDown":"444",
+    "activationMethod":"ABP",
+    "gatewayEUI":"This is a router",
+    "networkSessionKey":"This is a router",
+    "appSessionKey":"This is a router"
+  },
+  {
+    "id":"84-f3-2a-xg-bg-hj",
+    "devEUI":"bbbbbbbbbbbbb",
+    "deviceName": {
+      "value": "Router N14f1",
+      "link": "http://localhost:3001/device/door/84-f3-2a-xg-bg-hj"
+    },
+    "battery": "n/a",
+    "legalinkMargin": "n/a",
+    "lastSeen":"22.03.2020",
+    "status":"Connected",
+    "deviceType": "door",
+    "description":"This is a router",
+    "framesUp":"333",
+    "framesDown":"444",
+    "activationMethod":"ABP",
+    "gatewayEUI":"This is a router",
+    "networkSessionKey":"This is a router",
+    "appSessionKey":"This is a router"
+  },
+  {
+    "id":"94-f3-2a-xg-bg-hj",
+    "devEUI":"bbbbbbbbbbbbb",
+    "deviceName": {
+      "value": "Router N14f1",
+      "link": "http://localhost:3001/device/door/94-f3-2a-xg-bg-hj"
+    },
+    "battery": "n/a",
+    "legalinkMargin": "n/a",
+    "lastSeen":"22.03.2020",
+    "status":"Connected",
+    "deviceType": "door",
+    "description":"This is a router",
+    "framesUp":"333",
+    "framesDown":"444",
+    "activationMethod":"ABP",
+    "gatewayEUI":"This is a router",
+    "networkSessionKey":"This is a router",
+    "appSessionKey":"This is a router"
+  },
+  {
+    "id":"04-f3-2a-xg-bg-hj",
+    "devEUI":"bbbbbbbbbbbbb",
+    "deviceName": {
+      "value": "Router N14f1",
+      "link": "http://localhost:3001/device/door/04-f3-2a-xg-bg-hj"
+    },
+    "battery": "n/a",
+    "legalinkMargin": "n/a",
+    "lastSeen":"22.03.2020",
+    "status":"Connected",
+    "deviceType": "door",
+    "description":"This is a router",
+    "framesUp":"333",
+    "framesDown":"444",
+    "activationMethod":"ABP",
+    "gatewayEUI":"This is a router",
+    "networkSessionKey":"This is a router",
+    "appSessionKey":"This is a router"
+  }
+]
