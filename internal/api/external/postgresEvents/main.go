@@ -9,16 +9,19 @@ import (
 	"time"
 
 	"github.com/brocaar/lorawan"
+	"github.com/go-redis/redis/v7"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/brocaar/chirpstack-application-server/internal/api/external/adapters"
 	"github.com/brocaar/chirpstack-application-server/internal/config"
+	"github.com/brocaar/chirpstack-application-server/internal/storage"
 )
 
 type Repo struct {
 	db *sqlx.DB
+	r  redis.UniversalClient
 }
 
 func NewEventsHandler(conf config.IntegrationPostgreSQLConfig) (*Repo, error) {
@@ -39,9 +42,19 @@ func NewEventsHandler(conf config.IntegrationPostgreSQLConfig) (*Repo, error) {
 	d.SetMaxOpenConns(conf.MaxOpenConnections)
 	d.SetMaxIdleConns(conf.MaxIdleConnections)
 
-	return &Repo{
+	redisCli := storage.RedisClient()
+
+	r := &Repo{
 		db: d,
-	}, nil
+		r:  redisCli,
+	}
+
+	err = r.initRedis()
+	if err != nil {
+		return nil, err
+	}
+
+	return r, nil
 }
 
 type rxJson struct {
@@ -56,6 +69,37 @@ const (
 	all       = 3
 	nothing   = 4
 )
+
+func (r *Repo) initRedis() error {
+	getDevicesListQuery := `select distinct on (dev_eui) dev_eui, received_at,data
+           from device_up
+           order by dev_eui, received_at desc;`
+
+	rows, err := r.db.Query(getDevicesListQuery)
+	if err != nil {
+		return err
+	}
+
+	for rows.Next() {
+
+		var devId lorawan.EUI64
+		var data []byte
+		var t sql.NullTime
+
+		e := rows.Scan(&devId, &t, &data)
+		if e != nil {
+			continue
+		}
+
+		key := fmt.Sprintf("battery_%s", devId.String())
+		battery := float64(data[1])
+
+		r.r.Set(key, battery, -1)
+
+	}
+	return nil
+
+}
 
 func (r *Repo) GetStats(input adapters.DeviceStatReq) (resp []adapters.DeviceStatResp, err error) {
 	resp = []adapters.DeviceStatResp{}
@@ -100,6 +144,14 @@ func (r *Repo) GetStats(input adapters.DeviceStatReq) (resp []adapters.DeviceSta
 		}
 		resp = append(resp, tmp)
 	}
+
+	if len(resp) == 0 && input.DeviceId != "" {
+		tmp := adapters.DeviceStatResp{
+			Id:      input.DeviceId,
+			Packets: 0,
+		}
+		resp = append(resp, tmp)
+	}
 	return
 }
 
@@ -110,7 +162,7 @@ func (r *Repo) GetPackets(input adapters.GetEventsReq) (resp []adapters.Uplink, 
 	_ = id.UnmarshalText([]byte(input.DevEui))
 
 	limOffset := fmt.Sprintf(` ORDER BY received_at DESC  LIMIT %d OFFSET %d;`, input.Limit, input.Offset)
-	query := fmt.Sprintf(`SELECT received_at,device_name,application_id,frequency,dr,adr,f_cnt,f_port,data,rx_info 
+	query := fmt.Sprintf(`SELECT received_at,device_name,application_id,frequency,dr,adr,f_cnt,f_port,data,rx_info,object 
 								FROM device_up 
 								WHERE dev_eui = $1`)
 
@@ -163,8 +215,10 @@ func (r *Repo) GetPackets(input adapters.GetEventsReq) (resp []adapters.Uplink, 
 		var gw string
 		var rssi int32
 		var lorasnr float64
+		var object []byte
+		var encoded string
 
-		err = rows.Scan(&recieved, &deviceName, &appId, &frequency, &dr, &adr, &fcnt, &fport, &data, &rx)
+		err = rows.Scan(&recieved, &deviceName, &appId, &frequency, &dr, &adr, &fcnt, &fport, &data, &rx, &object)
 		if err != nil {
 			log.Error(err)
 			continue
@@ -181,6 +235,16 @@ func (r *Repo) GetPackets(input adapters.GetEventsReq) (resp []adapters.Uplink, 
 			lorasnr = rxLs[0].LoRaSNR
 		}
 
+		if object != nil && len(object) != 0 {
+			tmp := struct {
+				Msg string `json:"msg"`
+			}{}
+
+			_ = json.Unmarshal(object, &tmp)
+			encoded = tmp.Msg
+
+		}
+
 		ap := strconv.Itoa(int(appId.Int32))
 		dataStr := hex.EncodeToString(data)
 		fr := adapters.FloatFrequency(frequency.Int32)
@@ -190,7 +254,7 @@ func (r *Repo) GetPackets(input adapters.GetEventsReq) (resp []adapters.Uplink, 
 			DevEUI:        input.DevEui,
 			GatewayID:     gw,
 			Time:          recieved.Time.Format(adapters.TimeFormat),
-			TimeUnix:          recieved.Time.Unix(),
+			TimeUnix:      recieved.Time.Unix(),
 			RSSI:          rssi,
 			LoRaSNR:       lorasnr,
 			Channel:       0,
@@ -201,7 +265,8 @@ func (r *Repo) GetPackets(input adapters.GetEventsReq) (resp []adapters.Uplink, 
 			FCnt:          uint32(fcnt.Int32),
 			FPort:         uint32(fport.Int32),
 			Data:          data,
-			DataStr: dataStr,
+			DataStr:       dataStr,
+			Encoded:       encoded,
 		}
 		resp = append(resp, tmp)
 

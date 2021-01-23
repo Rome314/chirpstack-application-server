@@ -1,5 +1,14 @@
 version: "2"
 services:
+  ui:
+    image: registry.gitlab.com/rome314/chirpstack-as-ui:latest
+    network_mode: "host"
+    environment:
+      - WS_HOST=ws://localhost:1234/ws
+    ports:
+      - "3001:3001"
+
+
   chirpstack-application-server:
     build: 
       context: .

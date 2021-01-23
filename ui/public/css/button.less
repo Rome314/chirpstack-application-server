@@ -1,0 +1,81 @@
+// main: style.less
+
+.button{
+  outline: none;
+  border: none;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding-left: 15px;
+  padding-right: 15px;
+  width: 100%;
+  // max-width: ~"calc(100% - 15px - 15px)";
+  border-radius: 12px;
+  background: #F2F5FE;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 20px;
+  text-align: center;
+  color: #0346F2;
+  margin-top: 10px;
+  cursor: pointer;
+  transition-duration: 0.1s;
+  &:hover{
+    background-color: #DDE4FA;
+    color: #0346F2;
+  }
+  &:active{
+    background-color: #0346F2;
+    color: #FFFFFF;
+  }
+  &.disable{
+    cursor: default;
+    background-color: #d8dae2 !important;
+    color: #0346F2 !important;
+  }
+  &.button-confirm{
+    @color: #0346F2;
+    color: #FFFFFF !important;
+    background: @color;
+    &:hover{
+      background-color: #003bd1;
+    }
+    &:active{
+      background-color: #002789;
+    }
+    &.disable{
+      background-color: #4374F0 !important;
+    }
+  }
+  &.button-delete{
+    @color: #E4290F;
+    color: #FFFFFF !important;
+    background: @color;
+    &:hover{
+      background-color: #c9250f;
+    }
+    &:active{
+      background-color: #ec3b24 ;
+    }
+    &.disable{
+      background-color: #ff7866 !important;
+    }
+  }
+  &.button-add{
+    @color: #2DD75C;
+    color: #FFFFFF !important;
+    background: @color;
+    &:hover{
+      background-color: #28ba51;
+    }
+    &:active{
+      background-color: #38f26c ;
+    }
+    &.disable{
+      background-color: #8affab !important;
+      color: #888 !important;
+    }
+  }
+}

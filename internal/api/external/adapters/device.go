@@ -6,6 +6,8 @@ import (
 	"strconv"
 
 	pb "github.com/brocaar/chirpstack-api/go/v3/as/external/api"
+
+	"github.com/brocaar/chirpstack-application-server/internal/storage"
 )
 
 func GetDevisesListReq(input []byte) (*pb.ListDeviceRequest, error) {
@@ -29,11 +31,12 @@ func GetDevisesListReq(input []byte) (*pb.ListDeviceRequest, error) {
 
 func GetDevisesListResp(resp *pb.ListDeviceResponse, err error) (respBts []byte) {
 	type lsItem struct {
-		DevEUI        string `json:"devEUI"`
-		Name          string `json:"name"`
-		ApplicationID string `json:"applicationID"`
-		Description   string `json:"description"`
-		LasSeenAt     int64 `json:"lastSeenAt"`
+		DevEUI        string  `json:"devEUI"`
+		Name          string  `json:"name"`
+		ApplicationID string  `json:"applicationID"`
+		Description   string  `json:"description"`
+		LasSeenAt     int64   `json:"lastSeenAt"`
+		Battery       float64 `json:"battery"`
 	}
 
 	toReturn := struct {
@@ -46,14 +49,23 @@ func GetDevisesListResp(resp *pb.ListDeviceResponse, err error) (respBts []byte)
 	if err != nil {
 		toReturn.SetErr(err)
 	} else {
+		cl := storage.RedisClient()
+
 		ls := []lsItem{}
 		for _, device := range resp.Result {
+			var battery float64
+			key := fmt.Sprintf("battery_%s", device.DevEui)
+			if b, e := cl.Get(key).Float64(); e == nil {
+				battery = b
+			}
+
 			tmp := lsItem{
 				DevEUI:        device.DevEui,
 				Name:          device.Name,
 				ApplicationID: strconv.Itoa(int(device.ApplicationId)),
 				Description:   device.Description,
 				LasSeenAt:     fromTimeStampToUnix(device.LastSeenAt),
+				Battery:       battery,
 			}
 			ls = append(ls, tmp)
 		}
@@ -217,8 +229,9 @@ func GetDeviceRespFromPb(err error, aType string, device *pb.GetDeviceResponse, 
 		ApplicationID string  `json:"applicationID,omitempty"`
 		Name          string  `json:"name,omitempty"`
 		Description   string  `json:"description,omitempty"`
-		LastSeenAt    int64  `json:"lastSeenAt,omitempty"`
+		LastSeenAt    int64   `json:"lastSeenAt,omitempty"`
 		Activation    string  `json:"activation,omitempty"`
+		Battery       float64 `json:"battery,omitempty"`
 		Keys          keyItem `json:"keys,omitempty"`
 	}{}
 	toReturn.SetCmd("get_dev_info_resp")
@@ -235,6 +248,15 @@ func GetDeviceRespFromPb(err error, aType string, device *pb.GetDeviceResponse, 
 		toReturn.Description = device.Device.Description
 		toReturn.LastSeenAt = fromTimeStampToUnix(device.LastSeenAt)
 		toReturn.Activation = aType
+
+		var battery float64
+		key := fmt.Sprintf("battery_%s", device.Device.DevEui)
+		cl := storage.RedisClient()
+		if b, e := cl.Get(key).Float64(); e == nil {
+			battery = b
+		}
+
+		toReturn.Battery = battery
 
 		var k keyItem
 		switch aType {

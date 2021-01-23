@@ -1,0 +1,11 @@
+{
+  "name": "123",
+  "activation": "OTAA",
+  "devEUI": "3330383351380002",
+  "applicationID": 2,
+  "description": "33645",
+  "keys" :
+  {
+    "appKey": "288E208668A83185BA83D307B4409482"
+  }
+}

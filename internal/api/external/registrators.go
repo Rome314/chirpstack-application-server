@@ -42,7 +42,7 @@ func RegisterCommand(r *Realization) {
 		"send_data_req":                 r.doSendData,
 		"get_device_downlink_queue_req": r.doGetDeviceQueue,
 		"get_gw_stat_req":               r.doGatewayStat,
-		"get_device_stat_req":          r.doGetDeviceStat,
+		"get_device_stat_req":           r.doGetDeviceStat,
 		"get_data_req":                  r.doGetData,
 	}
 	r.Commands = commands

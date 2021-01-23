@@ -1,0 +1,112 @@
+// out: ../css/devices.css, compress: true
+
+@import "button.less";
+
+.popup-wrapper-top{
+  align-items: flex-start;
+  .popup{
+    max-width: 758px - 32px - 32px;
+  }
+}
+
+.popup-create-by-file{
+  .popup{
+    max-width: 470px - 32px - 32px;
+  }
+  .button-choose-file{
+    max-width: 191px - 30px !important;
+    input[type='file']{
+      display: none;
+    }
+  }
+  .file-area{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #F2F5FE;
+    border-radius: 20px;
+    margin-top: 32px;
+    border: 1px dashed #9FB3E7;
+    box-sizing: border-box;
+    &:hover{
+      background: #E1E9FF;
+      border-color: #0346F2;
+    }
+    .button{
+      max-height: 38px;
+      max-width: 191px;
+    }
+    img{
+      margin-top: 26px;
+    }
+    .drag-and-drop{
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 24px;
+      color: #333333;
+      margin-top: 10px;
+    }
+    .or{
+      font-weight: normal;
+      font-size: 14px;
+      text-align: center;
+      color: #9D9D9D;
+      margin-top: 4px;
+    }
+    .add{
+      font-weight: normal;
+      font-size: 11px;
+      line-height: 24px;
+      text-align: center;
+      color: #9D9D9D;
+      margin-top: 7px;
+      margin-bottom: 10px;
+    }
+  }
+  .hr{
+    margin-top: 16px;
+    margin-bottom: 16px;
+    height: 1px;
+    opacity: 0.2;
+    background-color: #0346F2;
+    width: 100%;
+  }
+  .btn-group{
+    .button{
+      margin-top: 0;
+    }
+  }
+}
+
+.table{
+  .table-group{
+    .table-header{
+      .cell{
+        &:nth-child(2){
+          margin-left: 10px;
+        }
+        &:nth-child(3){
+          margin-left: -10px;
+        }
+        &:nth-child(5){
+          // margin-left: 50px;
+        }
+      }
+    }
+    .content{
+      li{
+        .cell{
+          &:nth-child(2){
+            margin-left: 10px;
+          }
+          &:nth-child(3){
+            margin-left: -10px;
+          }
+          &:nth-child(5){
+            // margin-left: 50px;
+          }
+        }
+      }
+    }
+  }
+}
