@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    <link rel="stylesheet" href="public/css/style.css">
+    <link rel="stylesheet" href="public/css/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- <script src="https://kit.fontawesome.com/4c8293ed08.js"></script> -->
+    <!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+  </head>
+  <body>
+
+    <div class="login">
+      <form class="popup-content" action="/gateway/add" method="get">
+        <h2>LoRaWAN Server Login</h2>
+        <div class="input">
+          <div class="input-field">
+            <div class="controls left-controls">
+            </div>
+            <input  placeholder="Username" type="text" name="username" value="">
+            <div class="controls right-controls">
+            </div>
+          </div>
+          <div class="error"><img src="public/img/input/error-icon.svg" alt=""><span class="text"></span></div>
+        </div>
+        <div class="input">
+          <div class="input-field">
+            <input  placeholder="Password" type="text" name="password" class="hidden-input" value="">
+            <div class="controls right-controls">
+            </div>
+          </div>
+           <div class="error"><img src="public/img/input/error-icon.svg" alt=""><span class="text"></span></div>
+        </div>
+        <div class="btn-group">
+          <input class="button button-confirm" value="Login" type="submit">
+        </div>
+      </form>
+    </div>
+
+    <div class="notification">
+      <img class="popup-close popup-close-icon" src="public/img/popup/close-icon.svg" alt="">
+      <div class="text">
+        Invalid username or password (code: 16)
+      </div>
+    </div>
+
+    <!-- Script includes -->
+    <script src="public/js/general.js"></script>
+    <script src="public/js/ws-network.js"></script>
+    <script src="public/js/dropdown-menu.js"></script>
+    <script src="public/js/table.js"></script>
+    <script src="public/js/input.js"></script>
+    <script src="public/js/popup.js"></script>
+    <script src="public/js/form.js"></script>
+    <script src="public/js/switcher.js"></script>
+    <script src="public/js/notification.js"></script>
+
+    <script src="public/js/login.js"></script>
+    <!-- Script includes - End-->
+  </body>
+</html>

@@ -1,0 +1,54 @@
+[
+  {
+    "id":"44-f3-2a-xg-bg-hj",
+    "lastSeen": "Never",
+    "gatewayName": {
+      "value": "gateway_00100",
+      "link": "http://localhost:3001/gateway/44-f3-2a-xg-bg-hj"
+    },
+    "gatewayId": "2fywdh53klkn32",
+    "gatewayEUI": "2fywdh53klkn32",
+    "transmittedFrames": "2234",
+    "receivedFrames": "125",
+    "state":"Disconnected"
+  },
+  {
+    "id":"33-f3-2a-xg-bg-hj",
+    "lastSeen": "Never",
+    "gatewayName": {
+      "value": "gateway_00101",
+      "link": "http://localhost:3001/gateway/33-f3-2a-xg-bg-hj"
+    },
+    "gatewayId": "2fywdh53klkn32",
+    "gatewayEUI": "2fywdh53klkn32",
+    "transmittedFrames": "2234",
+    "receivedFrames": "125",
+    "state":"Connected"
+  },
+  {
+    "id":"22-f3-2a-xg-bg-hj",
+    "lastSeen": "Never",
+    "gatewayName": {
+      "value": "gateway_10100",
+      "link": "http://localhost:3001/gateway/22-f3-2a-xg-bg-hj"
+    },
+    "gatewayId": "2fywdh53klkn32",
+    "gatewayEUI": "2fywdh53klkn32",
+    "transmittedFrames": "2234",
+    "receivedFrames": "125",
+    "state":"Disconnected"
+  },
+  {
+    "id":"11-f3-2a-xg-bg-hj",
+    "lastSeen": "Never",
+    "gatewayName": {
+      "value": "gateway_10100",
+      "link": "http://localhost:3001/gateway/11-f3-2a-xg-bg-hj"
+    },
+    "gatewayId": "2fywdh53klkn32",
+    "gatewayEUI": "2fywdh53klkn32",
+    "transmittedFrames": "2234",
+    "receivedFrames": "125",
+    "state":"Connected"
+  }
+]

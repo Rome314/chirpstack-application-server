@@ -1,0 +1,355 @@
+// out: ../css/device.css, compress: true
+
+@import "button.less";
+
+.device-tabs{
+  padding-left: 20px;
+  padding-right: 20px;
+  .container{
+    padding: 0;
+    width: 100%;
+  }
+}
+
+.card-data{
+  padding-left: 20px;
+  padding-right: 20px;
+  flex-grow: 1;
+  // overflow: hidden;
+  .container{
+    padding: 32px;
+    background: #FFFFFF;
+    border-radius: 20px;
+    width: ~"calc(100% - 64px)";
+    max-width: 1070px - 64px;
+    // height: ~"calc(100% - 64px)";
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+//==================== Date Range Picker
+.date-range-picker{
+  margin-top: 32px;
+  .title{
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 24px;
+    color: #9D9D9D;
+    margin-bottom: 10px;
+  }
+  .date-controls{
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: auto;
+    .dropdown-list{
+      max-width: 338px;
+      position: absolute;
+      top: ~"calc(100% + 10px)";
+      left: 0;
+      width: ~"calc(100% - 2px)";
+      background: #FFFFFF;
+      border: 1px solid #DCDCEB;
+      box-shadow: 0px 4px 14px rgba(0, 0, 79, 0.05);
+      border-radius: 8px;
+      z-index: 3002;
+      display: none;
+      .item{
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 21px;
+        color: #1E2027;
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-bottom: 9px;
+        padding-top: 9px;
+        &:hover{
+          background-color: #F9F8FC;
+          cursor: pointer;
+        }
+      }
+    }
+    .button{
+      height: 42px;
+    }
+    .date-range{
+      display: flex;
+      border: 1px solid #E0E4EA;
+      box-sizing: border-box;
+      border-radius: 8px;
+      height: 42px;
+      align-items: center;
+      .date{
+        max-width: 138px;
+        width: 100%;
+        padding-left: 16px;
+        font-weight: normal;
+        font-size: 14px;
+        color: #9D9D9D;
+        cursor: pointer;
+        height: 100%;
+        min-width: 160px;
+        display: flex;
+        align-items: center;
+        &.active{
+          border: 2px solid #0346F2;
+          box-sizing: border-box;
+          border-radius: 8px;
+          position: relative;
+          z-index: 1;
+          font-weight: 600;
+          color: #333333;
+        }
+        &.choosed{
+          color: #333333;
+        }
+      }
+      .date-from{
+        color: #333333;
+        display: flex;
+        align-items: center;
+        position: relative;
+        &:after{
+          content: '';
+          height: 24px;
+          width: 1px;
+          background-color: #E7E9F0;
+          display: block;
+          position: absolute;
+          top: ~"calc(50% - 12px)";
+          left: 100%;
+        }
+      }
+    }
+    .button{
+      margin-top: 0;
+      max-width: 112px;
+      margin-left: 10px;
+    }
+  }
+  .date-picker-area{
+    margin-top: 43px;
+    .daterangepicker-container{
+      height: 520px;
+      display: none;
+    }
+  }
+}
+
+.date-pick-result{
+  // max-height: ~"calc(100% - 70px)";
+  display: none;
+  flex-direction: column !important;
+  // flex: 1;
+  .device-tabs, .table-group{
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  .table-group {
+    padding-right: 20px !important;
+  }
+  .table-flexible{
+    max-height: ~"calc(100% - 57px)" !important;
+    height: 100%;
+    position: relative;
+    .table-group{
+      display: block;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      .content{
+        max-height: ~"calc(100% - 115px)";
+      }
+    }
+    .load-bar{
+      background-color: white;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+  }
+}
+
+.embedded-daterangepicker .daterangepicker::before,
+.embedded-daterangepicker .daterangepicker::after {
+  display: none;
+}
+.embedded-daterangepicker .daterangepicker {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  float: left;
+  // width: 100%;
+  // padding: 20px !important;
+  padding-bottom: 7px !important;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 5 !important;
+  margin-top: 0;
+  background: #FFFFFF;
+  border: 1px solid #DCDCEB !important;
+  box-shadow: 0px 4px 14px rgba(0, 0, 79, 0.05) !important;
+  border-radius: 8px !important;
+  // border-bottom-left-radius: 0 !important;
+  // border-bottom-right-radius: 0 !important;
+  .drp-buttons{
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 14px;
+    margin-top: 75px !important;
+    span{
+      display: flex;
+      align-items: center;
+      flex: 1;
+      font-family: Poppins;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 16px;
+      line-height: 20px;
+      color: #1E2027;
+    }
+    .applyBtn.btn-primary {
+      .button();
+      .button-confirm();
+      width: auto;
+      height: 38px;
+      margin-top: 0;
+    }
+    .cancelBtn.btn-default{
+      .button();
+      width: auto;
+      height: 38px;
+      margin-top: 0;
+    }
+  }
+  .drp-calendar.left{
+    margin-right: 38px !important;
+  }
+  .drp-calendar.right{
+    margin-bottom: 75px;
+  }
+  .calendar-table{
+    padding-right: 0 !important;
+    .month{
+      font-family: Poppins;
+      font-style: normal;
+      font-weight: 600 !important;
+      font-size: 14px !important;
+      line-height: 24px !important;
+      color: #1A1E2C !important;
+    }
+    .table-condensed{
+      border-spacing: 0 4px;
+      border-collapse: separate;
+      thead{
+        position: relative;
+        &:after{
+          content: '';
+          position: absolute;
+          height: 1px;
+          width: 270px;
+          border-bottom: 1px solid #DFE5EB;
+        }
+        &:first-child{
+          th {
+            font-family: Poppins !important;
+            font-style: normal !important;
+            font-weight: normal !important;
+            font-size: 14px !important;
+            line-height: 20px !important;
+            text-align: center !important;
+            color: #6D7589 !important;
+            padding-bottom: 10px !important;
+            padding-top: 0 !important;
+          }
+        }
+      }
+      tbody{
+        tr{
+          td{
+            font-family: Poppins !important;
+            font-style: normal !important;
+            font-weight: normal !important;
+            font-size: 16px !important;
+            line-height: 20px !important;
+            text-align: center !important;
+            color: #AAB1C2 !important;
+            width: 40px !important;
+            height: 35px !important;
+            &:first-child{
+              border-top-left-radius: 40px;
+              border-bottom-left-radius: 40px;
+            }
+            &:last-child{
+            border-top-right-radius: 40px;
+            border-bottom-right-radius: 40px;
+            }
+            &.in-range{
+              background-color: #EDEDFF !important;
+            }
+            &.start-date{
+              background-color: #EDEDFF !important;
+              position: relative;
+              z-index: 0;
+              border-top-left-radius: 40px;
+              border-bottom-left-radius: 40px;
+              &::after{
+                position: absolute;
+                content: '';
+                width: 100%;
+                height: 100%;
+                left: 0;
+                top: 0;
+                background-color: #3F40F0 !important;
+                border-radius: 40px !important;
+                z-index: -1;
+              }
+            }
+            &.end-date{
+              position: relative;
+              z-index: 0;
+              border-top-right-radius: 40px;
+              border-bottom-right-radius: 40px;
+              &::after{
+                position: absolute;
+                content: '';
+                width: 100%;
+                height: 100%;
+                left: -2px;
+                top: -2px;
+                background-color: #3F40F0 !important;
+                border-radius: 40px !important;
+                z-index: -1;
+                background-color: #fff !important;
+                border: 2px solid #0346F2 !important;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.input_custom_width{
+  max-width: 211px !important;
+}
+
+.table-simple{
+  .table-group{
+    box-shadow: none !important;
+  }
+  .input {
+    .input-field{
+      .dropdown-list{
+        top: auto;
+        bottom: ~"calc(100% + 10px)";
+      }
+    }
+  }
+}

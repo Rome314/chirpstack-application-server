@@ -1,0 +1,116 @@
+// main: style.less
+
+.header{
+  padding-left: 20px;
+  padding-right: 20px;
+  .header-content{
+    @paddingLeft: 28px;
+    @paddingRight: 39px;
+    width: ~"calc(100%)";
+    max-width: 1290px;
+    min-height: 82px;
+    background: #FFFFFF;
+    border: 0.5px solid #EBEBF9;
+    box-sizing: border-box;
+    box-shadow: 8px 8px 16px 4px rgba(133, 139, 146, 0.06);
+    border-radius: 20px;
+    margin: auto;
+    margin-top: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: @paddingLeft;
+    padding-right: @paddingRight;
+    .category-menu{
+      display: flex;
+      li{
+        display: flex;
+        min-height: 32px;
+        display: flex;
+        align-items: center;
+        a{
+          display: flex;
+          align-items: center;
+          font-weight: 500;
+          color: #8E94A7;
+          svg{
+            margin-right: 12px;
+            & path {
+              fill: #8E94A7;
+            }
+          }
+        }
+        &:hover, &.active{
+          & a{
+            color: #0346F2;
+          }
+          & svg path {
+            fill: #0346F2;
+          }
+        }
+        &:after{
+          content: '';
+          width: 1px;
+          background-color: #E7E9F0;
+          height: 100%;
+          margin-left: 32px;
+          margin-right: 32px;
+        }
+        &:last-child:after{
+          display: none;
+        }
+      }
+    }
+    .user{
+      display: flex;
+      a {
+        display: flex;
+        align-items: center;
+        img{
+          margin-right: 16px;
+        }
+        .username{
+          margin-right: 16px;
+          font-weight: 500;
+          font-size: 16px;
+          color: #1A1E2C;
+        }
+      }
+      .dropdown-menu{
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        position: relative;
+        .dropdown-menu-content{
+          z-index: 1;
+          position: absolute;
+          right: -39px;
+          top: ~"calc(100% + 45px)";
+          background: #FFFFFF;
+          box-shadow: 8px 8px 16px 4px rgba(133, 139, 146, 0.06);
+          border-radius: 20px;
+          display: none;
+          li{
+            @paddingLeft: 28px;
+            @paddingRight: @paddingLeft;
+            padding-left: @paddingLeft;
+            padding-right: @paddingRight;
+            height: 61px;
+            // width: ~"calc(100% - @{paddingLeft} - @{paddingRight})";
+            min-width: 100px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            color: #333333;
+            a{
+              color: inherit;
+            }
+            &:hover{
+              background-color: #F9F9F9;
+            }
+          }
+        }
+      }
+    }
+  }
+}
