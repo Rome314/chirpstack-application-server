@@ -11,8 +11,11 @@ clean:
 	@echo "Cleaning up workspace"
 	@rm -rf build dist internal/migrations/migrations_gen.go internal/static/static_gen.go ui/build static/static
 	@rm -f static/index.html static/icon.png static/manifest.json static/asset-manifest.json static/service-worker.js
-	@rm -rf static/logo
+	@rm -rf static/public
+	@rm  -f static/*.js static/*.html static/*.json
+	@rm -rf static/node_modules
 	@rm -rf static/integrations
+	@rm -rf static/logo
 	@rm -rf static/swagger/*.json
 	@rm -rf dist
 
@@ -45,9 +48,12 @@ proto:
 
 
 ui/build:
+#	@echo "Building ui"
+#	@cd ui && npm i && npm run build
+#	@mv ui/build/* static
 	@echo "Building ui"
-	@cd ui && npm i && npm run build
-	@mv ui/build/* static
+	@cd ui_new
+	@cp -r ui_new/* static && cd static &&  npm i
 
 internal/statics internal/migrations: static/swagger/api.swagger.json
 	@echo "Generating static files"
@@ -78,7 +84,7 @@ dev-requirements:
 
 ui-requirements:
 	@echo "Installing UI requirements"
-	@cd ui && npm install
+	@cd ui_new && npm install
 
 serve: build
 	@echo "Starting ChirpStack Application Server"

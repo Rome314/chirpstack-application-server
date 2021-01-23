@@ -96,8 +96,8 @@ func (i *Integration) prepareLimit(c config.IntegrationPostgreSQLConfig) (err er
 						EXECUTE PROCEDURE public.check_number_of_row ();`, tableName, l, tableName, tableName, l, tableName, tableName)
 	}
 
-	_, err = i.db.Exec(query)
-	return err
+	_, _ = i.db.Exec(query)
+	return nil
 
 }
 

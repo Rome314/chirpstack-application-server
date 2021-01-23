@@ -98,5 +98,8 @@ func (h *Realization) listenJobs() {
 }
 
 func (h *Realization) sendJob(connId string, job *Job) {
-	h.Pool[connId].ResponseCh <- job
+	if conn, ok := h.Pool[connId]; ok {
+		conn.ResponseCh <- job
+	}
+
 }
