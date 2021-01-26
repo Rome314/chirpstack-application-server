@@ -37,7 +37,6 @@ let constants = {
     TEST_MODE: TEST_MODE,
     DB_PATH: DB_PATH,
     PERSONS_REFRESH_DELAY_MS: PERSONS_REFRESH_DELAY_MS,
-    WS_HOST: WS_HOST
 };
 
 module.exports = {constants};
