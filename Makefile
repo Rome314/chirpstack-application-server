@@ -51,9 +51,9 @@ ui/build:
 #	@echo "Building ui"
 #	@cd ui && npm i && npm run build
 #	@mv ui/build/* static
-	@echo "Building ui"
-	@cd ui_new
-	@cp -r ui_new/* static && cd static &&  npm i
+	@#echo "Building ui"
+	@#cd ui_new
+	@#cp -r ui_new/* static && cd static &&  npm i
 
 internal/statics internal/migrations: static/swagger/api.swagger.json
 	@echo "Generating static files"
@@ -83,8 +83,8 @@ dev-requirements:
 	go install github.com/golang/protobuf/protoc-gen-go
 
 ui-requirements:
-	@echo "Installing UI requirements"
-	@cd ui_new && npm install
+	@#echo "Installing UI requirements"
+	@#cd ui_new && npm install
 
 serve: build
 	@echo "Starting ChirpStack Application Server"

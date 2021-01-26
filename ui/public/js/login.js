@@ -1,3 +1,7 @@
+var wsAddress = document.location.href;
+wsAddress = wsAddress.substr(wsAddress.indexOf("://") + 3, wsAddress.length);
+wsAddress = wsAddress.substr(0, wsAddress.indexOf(":"));
+
 $(function() {
   $('form').submit(function (e) {
     e.preventDefault();
@@ -12,8 +16,10 @@ $(function() {
 
 //    network = new createWSNetwork("141.101.180.164:21234/ws", data.username, data.password);
     network = new createWSNetwork("localhost:1234/ws", data.username, data.password);
+//    network = new createWSNetwork(wsAddress + ":" + WEB_SOCKETS_EXTERNAL_SERVER_PORT, data.username, data.password);
 //    network.connect("141.101.180.164:21234/ws", () => {
     network.connect("localhost:1234/ws", () => {
+//    network.connect(wsAddress + ":" + WEB_SOCKETS_EXTERNAL_SERVER_PORT, () => {
       network.login(data.username, data.password, (res) => {
         if(res.status) {
           hideNotification();

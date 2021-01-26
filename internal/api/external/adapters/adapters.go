@@ -15,15 +15,15 @@ type DefaultResp struct {
 	ErrMsg string `json:"err_msg,omitempty"`
 }
 
-func FloatFrequency(input int32)float64{
+func FloatFrequency(input int32) float64 {
 
 	fs := fmt.Sprintf("%.1f", float64(input)/float64(1000000))
-	f,_ := strconv.ParseFloat(fs,64)
+	f, _ := strconv.ParseFloat(fs, 64)
 	return f
 
 }
 
-func UnixMillis(t time.Time)int64{
+func UnixMillis(t time.Time) int64 {
 	return t.Round(time.Millisecond).UnixNano() / 1e6
 }
 
@@ -31,7 +31,12 @@ var InvalidJsonErr = fmt.Errorf("invalid json provided")
 var NotImplementedErr = fmt.Errorf("not implemented")
 
 func init() {
-	data, err := ioutil.ReadFile("config.json")
+	var data []byte
+	var err error
+
+	if data, err = ioutil.ReadFile("./config.json"); err != nil {
+		data, err = ioutil.ReadFile("/etc/chirpstack-application-server/config.json")
+	}
 	if err != nil {
 		panic(err)
 	}

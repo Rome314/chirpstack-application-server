@@ -2,9 +2,10 @@ var wsAddress = document.location.href;
 wsAddress = wsAddress.substr(wsAddress.indexOf("://") + 3, wsAddress.length);
 wsAddress = wsAddress.substr(0, wsAddress.indexOf(":"));
 
+//var network = new createWSNetwork("localhost:1234/ws", window.localStorage.username, window.localStorage.password);
 var network = new createWSNetwork("localhost:1234/ws", window.localStorage.username, window.localStorage.password);
 //var network = new createWSNetwork("141.101.180.164:21234/ws", window.localStorage.username, window.localStorage.password);
-// var externalNetwork = new createWSNetwork(wsAddress + ":" + WEB_SOCKETS_EXTERNAL_SERVER_PORT);
+ var externalNetwork = new createWSNetwork(wsAddress + ":" + WEB_SOCKETS_EXTERNAL_SERVER_PORT);
 
 function createWSNetwork(host, username, password) {
     return Object.create({
