@@ -1,15 +1,15 @@
-.PHONY: build clean test ui-requirements serve internal/statics internal/migrations 
+.PHONY: build clean test  serve internal/statics internal/migrations
 PKGS := $(shell go list ./cmd/... ./internal/... | grep -v /vendor |grep -v /internal/static |grep -v /internal/migrations)
 VERSION := $(shell git describe --always |sed -e "s/^v//")
 API_VERSION := $(shell go list -m -f '{{ .Version }}' github.com/brocaar/chirpstack-api/go/v3 | awk '{n=split($$0, a, "-"); print a[n]}')
 
-build: ui/build internal/statics internal/migrations
+build:  internal/statics internal/migrations
 	mkdir -p build
 	go build $(GO_EXTRA_BUILD_ARGS) -ldflags "-s -w -X main.version=$(VERSION)" -o build/chirpstack-application-server cmd/chirpstack-application-server/main.go
 
 clean:
 	@echo "Cleaning up workspace"
-	@rm -rf build dist internal/migrations/migrations_gen.go internal/static/static_gen.go ui/build static/static
+	@rm -rf build dist internal/migrations/migrations_gen.go internal/static/static_gen.go  static/static
 	@rm -f static/index.html static/icon.png static/manifest.json static/asset-manifest.json static/service-worker.js
 	@rm -rf static/public
 	@rm  -f static/*.js static/*.html static/*.json
@@ -28,7 +28,7 @@ test: internal/statics internal/migrations
 	@go vet $(PKGS)
 	@go test -p 1 -v $(PKGS) -cover -coverprofile coverage.out
 
-dist: ui/build internal/statics internal/migrations
+dist:  internal/statics internal/migrations
 	@goreleaser
 	mkdir -p dist/upload/tar
 	mkdir -p dist/upload/deb
@@ -37,7 +37,7 @@ dist: ui/build internal/statics internal/migrations
 	mv dist/*.deb dist/upload/deb
 	mv dist/*.rpm dist/upload/rpm
 
-snapshot: ui/build internal/statics internal/migrations
+snapshot:  internal/statics internal/migrations
 	@goreleaser --snapshot
 
 proto:
@@ -46,14 +46,6 @@ proto:
 	@git --git-dir=/tmp/chirpstack-api/.git --work-tree=/tmp/chirpstack-api checkout $(API_VERSION)
 	@go generate internal/integration/loracloud/frame_rx_info.go
 
-
-ui/build:
-#	@echo "Building ui"
-#	@cd ui && npm i && npm run build
-#	@mv ui/build/* static
-	@#echo "Building ui"
-	@#cd ui_new
-	@#cp -r ui_new/* static && cd static &&  npm i
 
 internal/statics internal/migrations: static/swagger/api.swagger.json
 	@echo "Generating static files"
@@ -82,9 +74,6 @@ dev-requirements:
 	go install github.com/goreleaser/nfpm
 	go install github.com/golang/protobuf/protoc-gen-go
 
-ui-requirements:
-	@#echo "Installing UI requirements"
-	@#cd ui_new && npm install
 
 serve: build
 	@echo "Starting ChirpStack Application Server"
