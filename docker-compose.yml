@@ -8,7 +8,6 @@ services:
     ports:
       - "3001:3001"
 
-
   chirpstack-application-server:
     build: 
       context: .
