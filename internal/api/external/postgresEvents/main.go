@@ -5,11 +5,11 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"github.com/go-redis/redis/v7"
 	"strconv"
 	"time"
 
 	"github.com/brocaar/lorawan"
-	"github.com/go-redis/redis/v7"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -92,7 +92,12 @@ func (r *Repo) initRedis() error {
 		}
 
 		key := fmt.Sprintf("battery_%s", devId.String())
-		battery := float64(data[1])
+
+		var battery float64
+		if len(data) >= 2 {
+			battery = float64(data[1])
+
+		}
 
 		r.r.Set(key, battery, -1)
 
